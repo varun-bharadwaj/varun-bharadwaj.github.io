@@ -1,15 +1,195 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>My Portfolio</title>
+    <title>Colorizing the Prokudin-Gorskii Photo Collection</title>
     <style>
+        h1, h2
+        {
+            font-weight: 550;
+            line-height: 18px;
+        }
+        h3, h4{
+            font-weight: 500
+        }
         body {
-            font-family: Arial, sans-serif;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif, sans-serif;
+            margin: 35px;
+        }
+        .title {
+            text-align: center;
+        }
+        table, th, td {
+            border: 0.5px solid lightgray;
+            border-collapse: collapse;
             margin: 20px;
         }
+        
     </style>
 </head>
 <body>
-    <h1>Welcome to My CS180 Portfolio!</h1>
+    <div class="title">
+        <h1>Images of the Russian Empire</h1>
+        <h3>Colorizing the Prokudin-Gorskii Photo Collection</h3>
+        <h4>Varun Bharadwaj - Fall 2024 CS 180</h4>
+    </div>
+    
+    <div class="info">
+        <h2>Overview</h2>
+        <p>Sergei Mikhailovich Prokudin-Gorskii (1863-1944) was a Russian chemist and photographer who as early as 1907 began working on taking color pictures in pre-revolution Russia. 
+            After recieving the Tzar's special permission, Prokudin-Gorskii travelled across the Russian Empire and took color photographs of different scenes in early 20th century Russia. He recorded three exposures of every scene onto glass plates using a red, green, and blue filter.
+            He envisioned a way to combine these 3 images on top of eachother to achieve a color photograph. However, before he could finish his project, he had to flee Russia due to war. His RGB glass plate negatives survived, and since then the Library of Congress has made them public.
+            In this project, we work on algorithmically aligining these color films on top of eachother to generate color images from the Red, Blue, and Green glass plate negatives.</p>
+        <div style="  max-width: fit-content;
+        margin-left: auto;
+        margin-right: auto;">
+            <img src="images/cathedral.jpg" height="500px">
+            <img src="images/monastery.jpg" height="500px">
+            <img src="images/tobolsk.jpg" height="500px"><br>
+            <p style="text-align:center;">Example Glass Plate Images</p>
+        </div>
+    </div>
+
+    <div class="info">
+        <h2>Procedure</h2>
+        <p>My Process Initially started by dividing the image into three slices with the top third being the blue frame, the middle, third being the red frame, and the bottom third being the green frame. Below, you can see the blue, red, and green slices of the image of Emir of Bukhara.
+            In order to align the images, I use the blue image as a base. I then align the red and green images to the blue one.
+        </p><br>
+        <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
+            <img src="images/blue.jpg" height="300px">
+            <img src="images/red.jpg" height="300px">
+            <img src="images/green.jpg" height="300px">
+        </div>
+        <p>For smaller images such as that of the cathedral or monastery, I can simply search all alignments within a 30x30 pixel window, and pick the one that maximizes the Normalized Cross Correlation. This however, becomes difficult for larger images as they may have ideal alignments
+            outside of the pixel range. To speed up the search for these images, I implemented an image pyramid. I scale the 2 images I am trying to align down to a 512x512 pixel size. From there I find a suitable alignment within a 30x30 window. I then work my way back up the images using
+            the smaller image's alignment as a baseline to focus my search on the larger images.
+        </p>
+        <div style="  max-width: fit-content; margin-left: auto; margin-right: auto; display: flex; justify-content: center; align-items: center;">
+            <img src="images/emir_0.jpg" height="400px">
+            <img src="images/emir_1.jpg" height="200px">
+            <img src="images/emir_2.jpg" height="100px">
+            <img src="images/emir_3.jpg" height="50px">
+        </div>
+        <p style="text-align:center;">Image pyramid of blue slice of image of Emir of Bukhara.</p>
+        <p>In order to improve the alignment even better, I cropped 10% off all sides of the images in order to reduce the effects of the noisy edges. The image pyramid would then give me an alignment that would work for most images, but some of the larger images were still not aligned well and could be improved.
+            As you can see below, the outputs from this base model gave relatively good results for the sculpture and self portrait images, but the photo of Emir of Bukhara was very poorly aligned.
+        </p>
+        <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
+            <img src="images/sculpture_bad.jpg" height="300px">
+            <img src="images/self_portrait_bad.jpg" height="300px">
+            <img src="images/emir_bad.jpg" height="300px">
+        </div>
+        <h2>Bells and Whistles: Edge Detection</h2>
+        <p>To improve the alignment for the images that weren't well aligned like the one Emir, I decided to implement a custom metric that would specifcally try and align edges of the 2 images. The first step in order to do this was to take the original image and pass it through a Canny 
+            Edge detector. This edge detector would find pixels who were different from the one's around it by a large enough margin that we can assume it was an edge. You can see the output for the edge detector below. I then found the normalized cross correlations between the edges of 
+            the different slices of the original image. I found out that since the edges were typically 1-2 pixels wide, I would have really low cross correlation scores. In order to fix this, I added some noise to the edges using a Gaussian Blur process. This gave the alignment a bit of extra
+            margin for error, allowing for the algorithm to find relatively accurate alignments. 
+        </p>
+        <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
+            <img src="images/emir_0.jpg" height="300px">
+            <img src="images/emir_edge.jpg" height="300px">
+            <img src="images/emir_blur.jpg" height="300px">
+        </div>
+        <p style="text-align:center;">From left to right: Original Emir Blue Channel, Edges of Emir Blue Channel, Blurred Edges of Emir Blue Channel</p>
+        <p> I originally tried aligning the edges only, but I found that the extra noise from things like the background door, the fabric he was wearning, and the Canny edge detector's noise all contributed to relatively inaccurate results. However, after combining the edge correlation with 
+            the correlation of the pixel values, I was able to get much more stable results. I used a custom metric where I took 20% of the pixel value's correlation and summed it with the edge's correlation to get a new metric. This 20% was chosen after trying many different values, and it 
+            seemed to work best for most images. This made it so that 2/3 of the metric was contributed from the pixel brightness, and 1/3 of the value was coming from the edge detector. As you can see below, the edge detector provided drastic improvements in alignment for the Emir of Bukhara
+            image.
+        </p>
+        <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
+            <img src="images/emir_bad.jpg" height="300px">
+            <img src="images/emir.jpg" height="300px">
+        </div>
+        <p style="text-align:center;">Left: Emir alignment without edge detector, Right: Emir alignment with edge detector</p>
+    </div>
+
+    <div class="info" >
+        <h2>Results</h2>
+        <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
+            <table>
+                <tr>
+                    <td>
+                        <h4 style="text-align:center;">Cathedral</h4>
+                        <img src="results/cathedral.jpg" height="300px">
+                        <p style="text-align:center;">Red Offset: (12, 3), Green Offset: (5, 2)</p>
+                    </td>
+                    <td>
+                        <h4 style="text-align:center;">Monastery</h4>
+                        <img src="results/monastery.jpg" height="300px">
+                        <p style="text-align:center;">Red Offset: (3, 2), Green Offset: (-3, 2)</p>
+                    </td>
+                    <td>
+                        <h4 style="text-align:center;">Tobolsk</h4>
+                        <img src="results/tobolsk.jpg" height="300px">
+                        <p style="text-align:center;">Red Offset: (6, 3), Green Offset: (3, 2)</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <h4 style="text-align:center;">Church</h4>
+                        <img src="results/church.jpg" height="300px">
+                        <p style="text-align:center;">Red Offset: (58, -4), Green Offset: (25, 4)</p>
+                    </td>
+                    <td>
+                        <h4 style="text-align:center;">Emir</h4>
+                        <img src="results/emir.jpg" height="300px">
+                        <p style="text-align:center;">Red Offset: (106, 40), Green Offset: (-49, 23)</p>
+                    </td>
+                    <td>
+                        <h4 style="text-align:center;">Harvesters</h4>
+                        <img src="results/harvesters.jpg" height="300px">
+                        <p style="text-align:center;">Red Offset: (124, 12), Green Offset: (60, 16)</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <h4 style="text-align:center;">Icon</h4>
+                        <img src="results/icon.jpg" height="300px">
+                        <p style="text-align:center;">Red Offset: (89, 23), Green Offset: (41, 17)</p>
+                    </td>
+                    <td>
+                        <h4 style="text-align:center;">Lady</h4>
+                        <img src="results/lady.jpg" height="300px">
+                        <p style="text-align:center;">Red Offset: (118, 13), Green Offset: (56, 9)</p>
+                    </td>
+                    <td>
+                        <h4 style="text-align:center;">Melons</h4>
+                        <img src="results/melons.jpg" height="300px">
+                        <p style="text-align:center;">Red Offset: (178, 13), Green Offset: (81, 10)</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <h4 style="text-align:center;">Onion Church</h4>
+                        <img src="results/onion_church.jpg" height="300px">
+                        <p style="text-align:center;">Red Offset: (108, 36), Green Offset: (51, 26)</p>
+                    </td>
+                    <td>
+                        <h4 style="text-align:center;">Sculpture</h4>
+                        <img src="results/sculpture.jpg" height="300px">
+                        <p style="text-align:center;">Red Offset: (140, -27), Green Offset: (33, -11)</p>
+                    </td>
+                    <td>
+                        <h4 style="text-align:center;">Self Portrait</h4>
+                        <img src="results/self_portrait.jpg" height="300px">
+                        <p style="text-align:center;">Red Offset: (176, 36), Green Offset: (79, 29)</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <h4 style="text-align:center;">Three Generations</h4>
+                        <img src="results/three_generations.jpg" height="300px">
+                        <p style="text-align:center;">Red Offset: (112, 10), Green Offset: (55, 15)</p>
+                    </td>
+                    <td>
+                        <h4 style="text-align:center;">Train</h4>
+                        <img src="results/train.jpg" height="300px">
+                        <p style="text-align:center;">Red Offset: (87, 32), Green Offset: (44, 5)</p>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <table class="table table-bordered text-center">
+    </table>
 </body>
 </html>
