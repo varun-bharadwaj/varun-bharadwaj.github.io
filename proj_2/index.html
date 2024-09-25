@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Fun with Filters and Frequencies</title>
+    <style>
+        h1,
+        h2 {
+            font-weight: 550;
+            line-height: 18px;
+        }
+
+        h3,
+        h4 {
+            font-weight: 500
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif, sans-serif;
+            margin: 35px;
+        }
+
+        .title {
+            text-align: center;
+        }
+
+        table,
+        th,
+        td {
+            border: 0.5px solid lightgray;
+            border-collapse: collapse;
+            margin: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="title">
+        <h1>Fun With Filters and Frequencies</h1>
+        <h4>Varun Bharadwaj - Fall 2024 CS 180</h4>
+    </div>
+
+    <div class="info">
+        <h2>Part 1: Fun With Filters</h2>
+        <h3>1.1: Finite Difference Operator</h3>
+        <p>Below you can see the outputs from applying the finite difference operator to the cameraman image. This was
+            done by convolving the cameramn image with the kernel [1, -1] to calculate the partial derivative with
+            respect to x, and the kernel [[1], [-1]] to calculate the partial derivative with respect to y.</p>
+        <div style="  max-width: fit-content;
+        margin-left: auto;
+        margin-right: auto;">
+            <img src="images/1_1_x.png" height="500px">
+            <img src="images/1_1_y.png" height="500px">
+            <p style="text-align:center;">Finite difference gradients in x (left) and y (right)</p>
+        </div>
+        <p>Now we can use these 2 images to get the gradient magnitude image. To do this we did an elementwise
+            transformation on both of these images. For each pixel I calculated grad_mag[i][j] = sqrt(dx[i][j]^2 +
+            dy[i][j]^2). I then took these values along with a custom defined cutoff of 0.3 in order to binarize this
+            image and successfully detect edges.</p>
+        <div style="  max-width: fit-content;
+        margin-left: auto;
+        margin-right: auto;">
+            <img src="images/1_1_grad_mag.png" height="500px">
+            <img src="images/1_1_edges.png" height="500px">
+            <p style="text-align:center;">Gradient Magniutde Image (left) and Binarized Image (right)</p>
+        </div>
+
+        <h3>1.2: Derivative of Gaussian</h3>
+        <p>In order to improve the quality of the image derivatives that we are calculating we can use the derivative of
+            gaussian filter.
+            The filter works by first applying a gaussian blur low pass filter to remove the high frequency nosie from
+            the image. This will smooth out the image and make the image gradients much more stable.
+            After passing the image through the gaussian blur filter, we can then repeat the same finite difference
+            operator convolution that we did in the previous part in order to generate a higher quality image gradient.
+        </p>
+        <img src="images/1_2_blurred.png" height="500px">
+        <img src="images/1_2_mag.png" height="500px">
+        <img src="images/1_2_edges.png" height="500px">
+        <p style="text-align:center;">From left to right: Blurred Cameraman Image, Magnitude of Blurred Image Gradient,
+            Thresholded Edge Detector</p>
+        <h4>What differences do I See?</h4>
+        <p>The biggest difference that I saw while doing this was that the gaussian edge detector was much better at
+            gathering the full edge. In the normal edge detector, I had a lot of dots along the man's body and along the
+            tripod. The detector wasn't
+            able to pick up on all of the points along those edges, but in this there is a much better edge detection.
+            Furthermore, the gradient magnitude image did a lot better job
+            removing a lot of the edges along the grass. This is expected behavior because the grass is very high
+            frequency data since there are a lot of small minimal edges that we don't necessarily want to detect.
+        </p>
+        <h4>Combining into 1 Filter</h4>
+        <p>One of the biggest advantages of using convolution over cross correlation is its commutative property. This
+            allows us to combine both the gaussian blur and the difference operators into 1 singular convolution. If I
+            do this using the finite difference operator and the gaussian filter, I get the following output which is
+            the same as the 2 convolution output.
+        </p>
+        <img src="images/1_2_edges_singular.png" height="500px">
+    </div>
+    <h2>Part 2: Fun With Frequencies</h2>
+    <h3>2.1: Image Sharpening</h3>
+    <p>By subtracting the unit impulse from the gaussian blur kernels we can get a single convolution operator that will
+        sharpen our image by increasing the high frequencies.</p>
+    <div style="  max-width: fit-content;
+    margin-left: auto;
+    margin-right: auto;">
+        <img src="images/2_1_taj.png" height="500px">
+        <img src="images/taj.jpg" height="500px">
+        <p style="text-align:center;">Left: Sharpened Image of Taj Mahal, Right: Blurry Image of Taj Mahal, alpha = 0.7
+        </p>
+    </div>
+    <div style="  max-width: fit-content;
+    margin-left: auto;
+    margin-right: auto;">
+        <img src="images/2_1_ggb.png" height="500px">
+        <img src="images/ggb.jpg" height="500px">
+        <p style="text-align:center;">Left: Sharpened Image of Golden Gate Bridge, Right: Image of Golden Gate Bridge,
+            alpha = 3</p>
+    </div>
+    <div style="  max-width: fit-content;
+    margin-left: auto;
+    margin-right: auto;">
+        <img src="images/chitown.jpg" height="200px">
+        <img src="images/2_1_chi_blur.png" height="200px">
+        <img src="images/2_1_chi_sharp.png" height="200px">
+        <p style="text-align:center;">Left: Original Image of Chicago Skyline, Middle: Blurred Image of Chicago Skyline,
+            Right: Sharpened Image of Blurred Chicago Skyline, alpha = 3</p>
+    </div>
+    <h3>2.2: Hybrid Images</h3>
+    <p>Since our eyes are good at viewing different frequencies at different distances we can overlay the high
+        frequencies of one image on top of the low frequencies of another image in order to get a hybrid image that
+        looks different from up close versus from farther away.</p>
+    <div style="  max-width: fit-content;
+    margin-left: auto;
+    margin-right: auto;">
+        <img src="images/2_2_cat.png" height="400px">
+        <img src="images/2_2_high.png" height="400px">
+        <img src="images/2_2_low.png" height="400px">
+        <p style="text-align:center;">Left: Overlay of high frequencies of derek and low frequencies of the cat ,
+            Middle: your sleep paralysis demon, Right: Low Frequencies of Cat </p>
+    </div>
+    <p>Failure Examples</p>
+    <div style="  max-width: fit-content;
+    margin-left: auto;
+    margin-right: auto;">
+        <img src="images/2_2_car.png" height="200px">
+        <img src="images/2_2_car_high.png" height="200px">
+        <img src="images/2_2_car_low.png" height="200px">
+    </div>
+    <p style="text-align:center;">In this example I overlaid an image of a straight up F1 Car on top of an image of an
+        upside down F1 car. When the low frequency image dominates while looking from far away you can see the car as
+        upside down. However closer up you can see the right side up car. This one doesn't work as well as the other
+        ones because even up close you can still see the upside down car very well. The assymetry of the car makes it
+        easy to see the other frequency from up close.</p>
+    </div>
+    <p>Favorite Example</p>
+    <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
+        <img src="images/2_2_bron.png" height="200px">
+        <img src="images/2_2_bron_high.png" height="200px">
+        <img src="images/2_2_bron_low.png" height="200px">
+    </div>
+    <p style="text-align:center;">From Left to Right: Hybrid Image, High Frequency Image, Low Frequency Image</p>
+    <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
+        <img src="images/honeybun.jpg" height="200px">
+        <img src="images/fft_bron.png" height="200px">
+        <img src="images/fft_low.png" height="200px">
+        <img src="images/jorbum.jpg" height="200px">
+        <img src="images/fft_jordan.png" height="200px">
+        <img src="images/fft_high.png" height="200px">
+        <img src="images/fft_res.png" height="200px">
+    </div>
+    <p style="text-align:center;">From Left to Right: Original Lebron Picture, Lebron Log Magnitude FFT, Filtered Lebron
+        Log Magnitude FFT, Original Jordan Picture, Jordan Log Magnitude FFT, Jordan Filtered Log Magnitude FFT, Result
+        Image</p>
+    <h3>2.3: Pyramids</h3>
+    <p>Below I have the laplacian and gaussian stacks for the apple and the orange.</p>
+    <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
+        <img src="images/apple_laplace.png" height="200px">
+        <img src="images/apple_gaussian.png" height="200px">
+        <p style="text-align:center;">Apple Stacks: Left = Laplacian, Right = Gaussian</p>
+    </div>
+    <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
+        <img src="images/orange_laplace.png" height="200px">
+        <img src="images/orange_gauss.png" height="200px">
+        <img src="images/mask_gauss.png" height="200px">
+        <p style="text-align:center;">Orange Stacks Left = Laplacian, Middle = Gaussian, Right = Mask Gaussian</p>
+    </div>
+    <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
+        <img src="images/oraple.png" height="200px">
+    </div>
+    <p style="text-align:center;">I comibined the 2 images using the mask above in order to get the final oraple below.
+    </p>
+    <p>Below I have the an irregular mask where I turned kobe into a basketball.</p>
+    <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
+        <img src="images/kobe.png" height="200px">
+    </div>
+    <p>An example that didn't work so well was me trying to merge Alex Albon and George Russel's F1 Cars. The cars
+        merged decently well, but the track was not as smoothly blended.</p>
+    <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
+        <img src="images/georgebon.png" height="200px">
+    </div>
+    <h3>Biggest Takeaway</h3>
+    Honestly this project was a really fun implementation of the things that we learned in the lectures. I really liked
+    making the laplacian stacks and gaussian stacks and learning about the frequency domain in images. I really liked
+    the blending part of the project and it was really fun to be able to apply the theory from the frequencies onto an
+    actual use case.
+</body>
+
+</html>
