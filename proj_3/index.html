@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Project 3: Face Morphing</title>
+    <style>
+        h1,
+        h2 {
+            font-weight: 550;
+            line-height: 18px;
+        }
+
+        h3,
+        h4 {
+            font-weight: 500
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif, sans-serif;
+            margin: 35px;
+        }
+
+        .title {
+            text-align: center;
+        }
+
+        table,
+        th,
+        td {
+            border: 0.5px solid lightgray;
+            border-collapse: collapse;
+            margin: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="title">
+        <h1>Face Morphing</h1>
+        <h4>Varun Bharadwaj - Fall 2024 CS 180</h4>
+    </div>
+
+    <div class="info">
+        <h2 style="max-width: fit-content; margin-left: auto; margin-right: auto;">Part 1: Defining Correspondences</h2>
+        <p>The first step in order to generate a face morph was to define a set of Correspondences to define the
+            matching points in my face and LeBron's face. I used the provided correspondence tool to pick the same
+            points in both my face and LeBron's face. After doing this, I averaged these 2 points in order to get a
+            midway shape. I then used the scikit Dealuny algorithm in order to create a triangulation of these points. I
+            then applied this average triangulation onto the 2 faces.</p>
+        <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
+            <img src="images/triangles.png" height="500px">
+            <p style="text-align:center;">Keypoints and Corresponding Triangles</p>
+        </div>
+    </div>
+
+    <div class="info">
+        <h2 style="max-width: fit-content; margin-left: auto; margin-right: auto;">Part 2: Compute the Midway Face</h2>
+        <p>Now that we have a mapping from my face onto Lebron's face, I can begin working on a midway face to start the
+            morph sequence. I did the following to calculate the average face shape. I computed the average shape by
+            doing avg_shape = 1/2(my_face_pts + lebron_face_pts). I then calculated the inverse of the affine
+            transformation from the triangles in the original image and the triangles in the average face. I then used
+            the inverse morphing algorithm we learned in class in order to calculate the components of the midway image
+            from both my face and LeBron's face. I then cross dissolved these 2 images by averaging their pixel values.
+        </p>
+        <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
+            <img src="images/lebron_cropped.jpg" height="500px">
+            <img src="images/varun_cropped.jpg" height="500px">
+            <p style="text-align:center;">My face and Lebron's face</p>
+        </div>
+        <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
+            <img src="images/lebron_half.png" height="500px">
+            <img src="images/varun_half.png" height="500px">
+            <p style="text-align:center;">Midway Components from my face and Lebron's face</p>
+        </div>
+        <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
+            <img src="images/midway_face.png" height="500px">
+            <p style="text-align:center;">Midway Face</p>
+        </div>
+    </div>
+    <div class="info">
+        <h2 style="max-width: fit-content; margin-left: auto; margin-right: auto;">Part 3: Morph Sequence</h2>
+        <p>This step was similar to the previous step. I adjusted the weights to range from 0 to 1 increasing by 0.04
+            per frame. This led to the following 25 frame face morph.</p>
+        <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
+            <img src="images/trans.gif" height="500px">
+            <p style="text-align:center;">Face Morph</p>
+        </div>
+    </div>
+    <div class="info">
+        <h2 style="max-width: fit-content; margin-left: auto; margin-right: auto;">Part 4: Average of a Population</h2>
+        <p>For this part I used the danes dataset in order to find the average of a population. This population has 37
+            images with correspondences between the points. I first parsed the .asf files in order to get the
+            correspondences for each of the faces. I then took the average of all of the points. I then used the
+            morphing code I used in the previous parts in order to map each individual onto this average danish face.
+            Below are a few of my results.
+        </p>
+        <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
+            <img src="images/01-1m.bmp" height="300px">
+            <img src="images/0dane.png" height="300px">
+            <p style="text-align:center;">Left: Original, Right: Mapped to Average Shape</p>
+        </div>
+        <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
+            <img src="images/05-1m.bmp" height="300px">
+            <img src="images/1dane.png" height="300px">
+            <p style="text-align:center;">Left: Original, Right: Mapped to Average Shape</p>
+        </div>
+        <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
+            <img src="images/06-1m.bmp" height="300px">
+            <img src="images/2dane.png" height="300px">
+            <p style="text-align:center;">Left: Original, Right: Mapped to Average Shape</p>
+        </div>
+        <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
+            <img src="images/07-1m.bmp" height="300px">
+            <img src="images/3dane.png" height="300px">
+            <p style="text-align:center;">Left: Original, Right: Mapped to Average Shape</p>
+        </div>
+        <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
+            <img src="images/08-1f.bmp" height="300px">
+            <img src="images/4dane.png" height="300px">
+            <p style="text-align:center;">Left: Original, Right: Mapped to Average Shape</p>
+        </div>
+        <p>I then averaged all of the warped images in order to get the following average image.</p>
+        <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
+            <img src="images/avg_dane.png" height="300px">
+            <p style="text-align:center;">Average Dane</p>
+        </div>
+        <p>I then used the correspondence mapping described in the paper in order to get a correspondence of my face
+            that maps to the one used for the danish images. I then used this correspondence in order to get a morph of
+            my face onto the average dane's face shape and a morph of the average dane's face onto my face shape.</p>
+        <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
+            <img src="images/me_to_dane.png" height="300px">
+            <img src="images/dane_to_me.png" height="300px">
+            <p style="text-align:center;">My face mapped onto the average dane, average dane mapped onto my face</p>
+        </div>
+    </div>
+    <div class="info">
+        <h2 style="max-width: fit-content; margin-left: auto; margin-right: auto;">Part 5: Caricatures</h2>
+        <p>I then used an extrapolation in order to get a face that turns me into a more than average dane or a face
+            that turns me to less of a dane. I changed the alpha factor to -0.5 that made a picture that was a less
+            danish version of myself or increasing it to 1.5 to get a more danish version of my face mapped onto the
+            danish average.</p>
+        <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
+            <img src="images/more_me.png" height="500px">
+            <img src="images/more_dane.png" height="500px">
+            <p style="text-align:center;">a = -0.5, a = 1.5</p>
+        </div>
+    </div>
+    <div class="info">
+        <h2 style="max-width: fit-content; margin-left: auto; margin-right: auto;">Part 6: Bells + Whistles</h2>
+        <h3>Bells and Whistles 1: Automatic Correspondences</h3>
+        <p>One of the things that I did for bells and whistles was an automatic morphing. I used the mediapipe face mesh
+            library in order to generate correspondences automatically. Below you can see the automatic correspondes
+            generated for my face and lebron's face.</p>
+        <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
+            <img src="images/points_auto.png" height="500px">
+            <p style="text-align:center;">Keypoints and Corresponding Triangles</p>
+        </div>
+        <h3>Bells and Whistles 2: Ethnicity Morph</h3>
+        <p>I used a picture of an average greek male that I found on the interenet in order to morph my face onto it. I
+            used the midway image code that I used to create the morph between me and Lebron along with the automatic
+            correspondence creator that I added in the previous bells and whistles part. I have attached the 3 images
+            below.</p>
+        <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
+            <img src="images/varun.jpg" height="500px">
+            <img src="images/greek.jpg" height="500px">
+            <img src="images/varun_greek.png" height="500px">
+            <p style="text-align:center;">Me, Average Greek Face, Me Morphed onto Greek Face</p>
+        </div>
+        <p>Here is the morph of just my face shape and appearence</p>
+        <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
+            <img src="images/varun_greek_shape.png" height="500px">
+            <img src="images/varun_greek_color.png" height="500px">
+            <p style="text-align:center;">Morph to shape, Morph to Appearance</p>
+        </div>
+    </div>
+</body>
+
+</html>
