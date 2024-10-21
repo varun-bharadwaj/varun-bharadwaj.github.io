@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Project 3: Face Morphing</title>
+    <style>
+        h1,
+        h2 {
+            font-weight: 550;
+            line-height: 18px;
+        }
+
+        h3,
+        h4 {
+            font-weight: 500
+        }
+
+        body {
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif, sans-serif;
+            margin: 35px;
+        }
+
+        .title {
+            text-align: center;
+        }
+
+        table,
+        th,
+        td {
+            border: 0.5px solid lightgray;
+            border-collapse: collapse;
+            margin: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="title">
+        <h1>Stitching Photo Mosaics</h1>
+        <h4>Varun Bharadwaj - Fall 2024 CS 180</h4>
+    </div>
+
+    <div class="info">
+        <h2 style="max-width: fit-content; margin-left: auto; margin-right: auto;">Part 1: Taking Images</h2>
+        <p>Below are my 3 sets of Images that I used for this project</p>
+        <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
+            <img src="images/0.jpg" height="300px">
+            <img src="images/1.jpg" height="300px">
+            <p style="text-align:center;">My Living Room</p>
+        </div>
+        <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
+            <img src="images/room_1.jpg" height="300px">
+            <img src="images/room_2.jpg" height="300px">
+            <p style="text-align:center;">My Housemate's bedroom</p>
+        </div>
+        <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
+            <img src="images/outside_1.jpg" height="300px">
+            <img src="images/outside_2.jpg" height="300px">
+            <p style="text-align:center;">Outisde my apartment</p>
+        </div>
+    </div>
+    <div class="info">
+        <h2 style="max-width: fit-content; margin-left: auto; margin-right: auto;">Part 2: Recovering Homographies</h2>
+        <p>In order to get a projective mapping between the common features in the first image and the second image, we
+            have to first find pairs of corresponding points. I do this by hand labelling matching corners in both the
+            first and second images. I then use a system of linear equations in order to calculate the homography that
+            maps the points in the first image to the points in the second image. We want to find a matrix H that solves
+            this equation.</p>
+        <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
+            <img src="images/eq1.png" height="300px">
+        </div>
+        <p>We can do this by setting up the points like this such that we get the solution to the values of H. We will
+            use least squares to approximate a solution since this is an over determined system with 0 solutions. We
+            want to find the solution thats closest and accounts for a bit of the noise in the selection system. We will
+            apply this to all of our points in order to get a tall matrix that we can solve using the aforementioned
+            method.</p>
+        <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
+            <img src="images/eq2.png" height="300px">
+        </div>
+    </div>
+    <div class="info">
+        <h2 style="max-width: fit-content; margin-left: auto; margin-right: auto;">Part 3: Warp the Images</h2>
+        <p>The first thing that I did in order to warp the images was calculate using the Homographies that I calculated
+            in the previous part in order to calculate the bounding box of the final image. I then used the code that I
+            created in project 3 in order to warp the original 4 corners of the image into the new 4 corners that we
+            calculated using the homography. By doing this we were able to test image rectification which I detail
+            below.</p>
+    </div>
+    <div class="info">
+        <h2 style="max-width: fit-content; margin-left: auto; margin-right: auto;">Part 4: Image Rectification</h2>
+        <p>I used the image warping I created in the previous part along with the homography calculation that I did 2
+            parts ago in order to do image rectification on 2 images on my desk. I rectified a picture of my notebook
+            and a picture of gum on my desk to be able to better read the tops of these images.</p>
+            <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
+                <img src="images/gum.jpg" height="300px">
+                <img src="images/notebook.jpg" height="300px">
+                <p style="text-align:center;">Original Pictures of a gum packet and a notebook on my desk</p>
+            </div>
+        <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
+            <img src="images/gum_rect.jpg" height="300px">
+            <img src="images/notebook_rect.jpg" height="300px">
+            <p style="text-align:center;">Rectified Pictures of a gum packet and a notebook on my desk</p>
+        </div>
+    </div>
+
+    <div class="info">
+        <h2 style="max-width: fit-content; margin-left: auto; margin-right: auto;">Part 5: Mosaics</h2>
+        <p>In order to stich images together using a mosaciing I did the following steps. I first used the images and
+            their point correspondences in order to morph one image onto the other image's points using the code that I
+            created in the previous 3 parts. I then needed to merge these two together. Doing so naivelly by just adding
+            the images together would create a very strong border. So instead what I did was I first found the polygons
+            of the 2 images that were used to create the images. This represented the parts of the 2 images that
+            contribute to the full canvas of the overall image. I then used the distance transform in order to calculate
+            how far each pizel in each of these polygons was from the edge of the corresponding image. I then compared
+            these 2 to create a mask for the masking. If the image had a greater distance transform I used it as part of
+            that image's mask and did the opposite if that wasn't true. I then combined these 2 using the blending code
+            that I created in project 2 to get the following mosaics.</p>
+            <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
+                <img src="images/dist_trans_0.jpg" height="300px">
+                <img src="images/dist_trans_1.jpg" height="300px">
+                <p style="text-align:center;">Distance Transforms used for mask for mosaic of my living room</p>
+            </div>
+            <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
+                <img src="images/outside.jpg" height="300px">
+                <img src="images/result_1.jpg" height="300px">
+                <img src="images/room.jpg" height="300px">
+                <p style="text-align:center;">Final Mosaics</p>
+            </div>
+    </div>
+    </div>
+</body>
+
+</html>
