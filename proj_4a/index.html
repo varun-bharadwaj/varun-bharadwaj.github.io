@@ -1,133 +1,274 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
 <head>
-    <title>Project 3: Face Morphing</title>
-    <style>
-        h1,
-        h2 {
-            font-weight: 550;
-            line-height: 18px;
-        }
-
-        h3,
-        h4 {
-            font-weight: 500
-        }
-
-        body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif, sans-serif;
-            margin: 35px;
-        }
-
-        .title {
-            text-align: center;
-        }
-
-        table,
-        th,
-        td {
-            border: 0.5px solid lightgray;
-            border-collapse: collapse;
-            margin: 20px;
-        }
-    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stitching Photo Mosaics</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
-    <div class="title">
+    <!-- Header Section -->
+    <header class="header">
         <h1>Stitching Photo Mosaics</h1>
-        <h4>Varun Bharadwaj - Fall 2024 CS 180</h4>
-    </div>
+        <p class="subtitle">Varun Bharadwaj - CS 180</p>
+    </header>
+    <!-- Steps Section -->
+    <section class="steps">
+        <h2>Part A: Image Warping and Mosaics</h2>
 
-    <div class="info">
-        <h2 style="max-width: fit-content; margin-left: auto; margin-right: auto;">Part 1: Taking Images</h2>
-        <p>Below are my 3 sets of Images that I used for this project</p>
-        <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
-            <img src="images/0.jpg" height="300px">
-            <img src="images/1.jpg" height="300px">
-            <p style="text-align:center;">My Living Room</p>
-        </div>
-        <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
-            <img src="images/room_1.jpg" height="300px">
-            <img src="images/room_2.jpg" height="300px">
-            <p style="text-align:center;">My Housemate's bedroom</p>
-        </div>
-        <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
-            <img src="images/outside_1.jpg" height="300px">
-            <img src="images/outside_2.jpg" height="300px">
-            <p style="text-align:center;">Outisde my apartment</p>
-        </div>
-    </div>
-    <div class="info">
-        <h2 style="max-width: fit-content; margin-left: auto; margin-right: auto;">Part 2: Recovering Homographies</h2>
-        <p>In order to get a projective mapping between the common features in the first image and the second image, we
-            have to first find pairs of corresponding points. I do this by hand labelling matching corners in both the
-            first and second images. I then use a system of linear equations in order to calculate the homography that
-            maps the points in the first image to the points in the second image. We want to find a matrix H that solves
-            this equation.</p>
-        <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
-            <img src="images/eq1.png" height="300px">
-        </div>
-        <p>We can do this by setting up the points like this such that we get the solution to the values of H. We will
-            use least squares to approximate a solution since this is an over determined system with 0 solutions. We
-            want to find the solution thats closest and accounts for a bit of the noise in the selection system. We will
-            apply this to all of our points in order to get a tall matrix that we can solve using the aforementioned
-            method.</p>
-        <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
-            <img src="images/eq2.png" height="300px">
-        </div>
-    </div>
-    <div class="info">
-        <h2 style="max-width: fit-content; margin-left: auto; margin-right: auto;">Part 3: Warp the Images</h2>
-        <p>The first thing that I did in order to warp the images was calculate using the Homographies that I calculated
-            in the previous part in order to calculate the bounding box of the final image. I then used the code that I
-            created in project 3 in order to warp the original 4 corners of the image into the new 4 corners that we
-            calculated using the homography. By doing this we were able to test image rectification which I detail
-            below.</p>
-    </div>
-    <div class="info">
-        <h2 style="max-width: fit-content; margin-left: auto; margin-right: auto;">Part 4: Image Rectification</h2>
-        <p>I used the image warping I created in the previous part along with the homography calculation that I did 2
-            parts ago in order to do image rectification on 2 images on my desk. I rectified a picture of my notebook
-            and a picture of gum on my desk to be able to better read the tops of these images.</p>
-            <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
-                <img src="images/gum.jpg" height="300px">
-                <img src="images/notebook.jpg" height="300px">
-                <p style="text-align:center;">Original Pictures of a gum packet and a notebook on my desk</p>
+        <!-- Step 1 -->
+        <div class="step">
+            <h3>Step 1: Taking Images</h3>
+            <p>My Living Room</p>
+            <div class="image-group">
+                <img src="images/0.jpg" alt="Image 1 of living">
+                <img src="images/1.jpg" alt="Image 2 of living">
             </div>
-        <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
-            <img src="images/gum_rect.jpg" height="300px">
-            <img src="images/notebook_rect.jpg" height="300px">
-            <p style="text-align:center;">Rectified Pictures of a gum packet and a notebook on my desk</p>
+            <p>My Housemate's Bedroom</p>
+            <div class="image-group">
+                <img src="images/room_1.jpg" alt="Image 1 of room">
+                <img src="images/room_2.jpg" alt="Image 2 of room">
+            </div>
+            <p>Outside my Apartment</p>
+            <div class="image-group">
+                <img src="images/outside_1.jpg" alt="Image 1 of outside">
+                <img src="images/outside_2.jpg" alt="Image 2 of outside">
+            </div>
         </div>
-    </div>
 
-    <div class="info">
-        <h2 style="max-width: fit-content; margin-left: auto; margin-right: auto;">Part 5: Mosaics</h2>
-        <p>In order to stich images together using a mosaciing I did the following steps. I first used the images and
-            their point correspondences in order to morph one image onto the other image's points using the code that I
-            created in the previous 3 parts. I then needed to merge these two together. Doing so naivelly by just adding
-            the images together would create a very strong border. So instead what I did was I first found the polygons
-            of the 2 images that were used to create the images. This represented the parts of the 2 images that
-            contribute to the full canvas of the overall image. I then used the distance transform in order to calculate
-            how far each pizel in each of these polygons was from the edge of the corresponding image. I then compared
-            these 2 to create a mask for the masking. If the image had a greater distance transform I used it as part of
-            that image's mask and did the opposite if that wasn't true. I then combined these 2 using the blending code
-            that I created in project 2 to get the following mosaics.</p>
-            <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
-                <img src="images/dist_trans_0.jpg" height="300px">
-                <img src="images/dist_trans_1.jpg" height="300px">
-                <p style="text-align:center;">Distance Transforms used for mask for mosaic of my living room</p>
+        <!-- Step 2 -->
+        <div class="step">
+            <h3>Step 2: Recovering Homographies</h3>
+            <p>In order to get a projective mapping between the common features in the first image and the second image,
+                we have to first find pairs of corresponding points. I do this by hand labelling matching corners in the
+                images. I chose point first and second images. When labelling points that match in images, I tend to
+                pick points at corners of recognazible features as they allow for accurate correspondences between
+                images. As you can see in the examples I used features such as the corners of TVs, doorframes, walls,
+                countertops, posters, and tables.</p>
+            <div class="image-group">
+                <img src="images/corr_1.png" alt="Description of image 1 for step 2">
+                <img src="images/corr_2.png" alt="Description of image 1 for step 2">
             </div>
-            <div style="  max-width: fit-content; margin-left: auto; margin-right: auto;">
-                <img src="images/outside.jpg" height="300px">
-                <img src="images/result_1.jpg" height="300px">
-                <img src="images/room.jpg" height="300px">
-                <p style="text-align:center;">Final Mosaics</p>
+            <div class="image-group">
+                <img src="images/corr_3.png" alt="Description of image 1 for step 2">
             </div>
-    </div>
-    </div>
+            <p>After getting pairs of points, we want to find a mapping that can morph points in the first image into
+                their corresponding location in the second image. We want to find a projective transformation that
+                solves the following systems of linear equations.</p>
+            <div class="image-group">
+                <img src="images/eq1.png" alt="Description of image 1 for step 2">
+            </div>
+            <p>We can compute this H matrix by modifying this original equationt o get an alternate system of equations
+                with the variables of H as the parameters.</p>
+            <div class="image-group">
+                <img src="images/eq2.png" alt="Description of image 1 for step 2">
+            </div>
+            <p>We can then use the points that we have manually labelled as the values for x, y, x', and y' to create a
+                solvable system of equations. However, due to noise in both the image capturing and correspondnece
+                matching we need to find an approximate solution using Least Squares to apprximate a solution for the
+                values of H. </p>
+        </div>
+
+        <div class="step">
+            <h3>Step 3: Warp the images</h3>
+            <p>We will be using inverse warping in order to warp the images. To do this we first need to create a
+                bounding box for the final warped image. I do this by using the homograph that we calculated in the
+                previous part to map the corners of the original image to their new location in the warped image. After
+                this, the process was similar to the inverse warping that we used in project 3. We use the homography
+                that we calculated in the previous step in order to get a mapping for each pixel to its original
+                location, and then used interpolation to get the specific color.
+            </p>
+        </div>
+
+        <div class="step">
+            <h3>Step 4: Image Rectification</h3>
+            <p>To test the code from part 3, I used image rectification to rectify rectangular objects. I did this by
+                first taking a picture of a notebook and piece of gum on my desk. Since I didn't take a picture of these
+                from directly above, they were not perfect rectangles in the original image.
+            </p>
+            <div class="image-group">
+                <img src="images/gum.jpg" alt="Description of image 1 for step 2">
+                <img src="images/notebook.jpg" alt="Description of image 1 for step 2">
+            </div>
+            <p> I then performed image rectification, which transformed these by morphing these rectangular objects onto
+                a rectangle to orient it to be aligned with the edges of the image. Below we can see the results of the
+                rectification of these images.</p>
+            <div class="image-group">
+                <img src="images/gum_rect.jpg" alt="Description of image 1 for step 2">
+                <img src="images/notebook_rect.jpg" alt="Description of image 1 for step 2">
+            </div>
+        </div>
+        <div class="step">
+            <h3>Step 5: Mosaics</h3>
+            <p>After warping the original image, we need to properly blend the 2 images together. Simply averaging the 2
+                images together will not work properly because small differences in lighting will become apparent, and
+                there will be a clear boundary between the 2 images.
+            </p>
+            <div class="image-group">
+                <img src="images/bad.jpg" alt="Description of image 1 for step 2">
+            </div>
+            <p>As you can see in the previous image, although the images are properly aligned doing a naive warp leaves
+                a very clear border between the 2 images. To combat this, we instead do multi-resolution blending to
+                remove this seam. To do this, we first need to create an alpha mask that tells the blending algorithm
+                how much of each image to use at each pixel. We can do this by first, calculating a distance transform
+                on the bounding box of each image. This gives the distance from each pixel in either image to the edge
+                of it's bounding box. We can then run a pixel-wise comparison on these 2 bounding boxes in order to
+                develop a larger mask that can be used to blend the 2 images.</p>
+            <div class="image-group">
+                <img src="images/dist_trans_0.jpg" alt="Description of image 1 for step 2">
+                <img src="images/dist_trans_1.jpg" alt="Description of image 1 for step 2">
+            </div>
+            <p>For each of these 2 distance transforms, if image 1's distance is greater, we will set the mask at that
+                pixel to 0, and the opposite if image 2's distance is greater. Doing so gives us this final mask that we
+                can use for 2-level multi-resolution blending.</p>
+            <div class="image-group">
+                <img src="images/mask.jpg" alt="Description of image 1 for step 2">
+            </div>
+            <p>Finally we can use the multi-resolution blending that we implemented in project 2 to build the warped 1st
+                image and second image using the mask we just created. Doing so gives us the following resoluts for the
+                3 images that I took in the first part of the project. </p>
+            <div class="image-group">
+                <img src="images/result_1.jpg" alt="Description of image 1 for step 2">
+            </div>
+            <div class="image-group">
+                <img src="images/outside.jpg" alt="Description of image 1 for step 2">
+                <img src="images/room.jpg" alt="Description of image 1 for step 2">
+            </div>
+        </div>
+
+        <!-- Additional Steps as needed -->
+    </section>
+    <section class="steps">
+        <h2>Part B: Feature Matching and Autostitching</h2>
+        <div class="step">
+            <h3>Step 1: Corner Detection</h3>
+            <p>In order to generate a set of potential corners that can serve as features, we use a Harris point
+                detector in order to generate potential corners of interest. The Harris corner detector generates over
+                6700 different corners as you can see below, so we must do additoinal processing in order to find the
+                best features and points to match.</p>
+            <div class="image-group">
+                <img src="images/corners.jpg" alt="Description of image 1 for step 2">
+            </div>
+            <p>Here we can see the corners that the Harris point detector returned. There is a lot of noise due to it
+                picking up corners such as the pepperoni on the Uber Eats poster, the small edges on the texture of the
+                wall, and a bunch around my friend's hair. These are not all very helpful, so we need to find a way to
+                select only the highest corners out of all of these.</p>
+        </div>
+        <div class="step">
+            <h3>Step 2: Adaptive Non-maximal Supression</h3>
+            <p>To reduce the set of corners to look at we can do adaptive non maximal supression. This is an algorithm
+                that given a set of possible corners, finds the highest quality corners. We want the corners to be
+                spatially distributed over the image and to be strong. The way that this is done is by finding the
+                largest radius r, such that there are 500 points that are all larger than all other points within r
+                pixels of itself. This ensures that we are spatially distributing our points well and having strong
+                corners. </p>
+            <div class="image-group">
+                <img src="images/anms.jpg" alt="Description of image 1 for step 2">
+            </div>
+            <p>Here we can see the corners that the ANMS point filtering returned. There is a lot of less noise, and
+                this serves as a stronger smaller set to do feature matching on.</p>
+        </div>
+        <div class="step">
+            <h3>Step 3: Feature Extraction</h3>
+            <p>Now that we have 500 possible corners in 2 images, we can being working on trying to match features
+                between the images. Below I have attached the 2 images and their ANMS supressed corners.</p>
+            <div class="image-group">
+                <img src="images/anms.jpg" alt="Description of image 1 for step 2">
+                <img src="images/anms2.jpg" alt="Description of image 1 for step 2">
+            </div>
+            <p>For each point in the corner set for both images we can extract the features by taking the 40x40 pixel
+                area around the corner, resize it down to an 8x8 feature and then normalize the feature by subtracting
+                the mean and dividing the standard deviation. This for each corner gives us a comparable feature that we
+                can use to find matches between images. Below I have put 5 features for corners in the first image.</p>
+            <div class="image-group">
+                <img src="images/feature0.jpg" style="image-rendering: pixelated;"
+                    alt="Description of image 1 for step 2">
+                <img src="images/feature1.jpg" style="image-rendering: pixelated;"
+                    alt="Description of image 1 for step 2">
+                <img src="images/feature2.jpg" style="image-rendering: pixelated;"
+                    alt="Description of image 1 for step 2">
+                <img src="images/feature3.jpg" style="image-rendering: pixelated;"
+                    alt="Description of image 1 for step 2">
+                <img src="images/feature4.jpg" style="image-rendering: pixelated;"
+                    alt="Description of image 1 for step 2">
+            </div>
+        </div>
+        <div class="step">
+            <h3>Step 4: Feature Extraction</h3>
+            <p>After getting the features from the feature extractor, the next step is to match corresponding features
+                in both images. The way that this is done is by finding the feature in the corresponding image that has
+                the closest l2 distance from the current feature. A trick that we can do in order to further filter out
+                features that are not in the other image and noisy outliers from the real corresponding corners is by
+                using Lowe's thresholding. What we do here is we add an additional constraint that for in order for a
+                feature to be matching, we also require that the l2 distance between the closest corresponding feature
+                is at least twice as big as the l2 distance to the 2nd closest corresponding feature. What this does is
+                that it ensures that feature matches are more likely to be real features as oppossed to coincidences and
+                noise. Below I have put some of the matched features</p>
+            <p>Matching Feature 1:</p>
+            <div class="image-group">
+                <img src="images/featurematch0_0.jpg" style="image-rendering: pixelated;"
+                    alt="Description of image 1 for step 2">
+                <img src="images/featurematch0_1.jpg" style="image-rendering: pixelated;"
+                    alt="Description of image 1 for step 2">
+            </div>
+            <p>Matching Feature 2:</p>
+            <div class="image-group">
+                <img src="images/featurematch1_0.jpg" style="image-rendering: pixelated;"
+                    alt="Description of image 1 for step 2">
+                <img src="images/featurematch1_1.jpg" style="image-rendering: pixelated;"
+                    alt="Description of image 1 for step 2">
+            </div>
+            <p>Matching Feature 3:</p>
+            <div class="image-group">
+                <img src="images/featurematch2_0.jpg" style="image-rendering: pixelated;"
+                    alt="Description of image 1 for step 2">
+                <img src="images/featurematch2_1.jpg" style="image-rendering: pixelated;"
+                    alt="Description of image 1 for step 2">
+            </div>
+            <p>Matching Feature 4:</p>
+            <div class="image-group">
+                <img src="images/featurematch3_0.jpg" style="image-rendering: pixelated;"
+                    alt="Description of image 1 for step 2">
+                <img src="images/featurematch3_1.jpg" style="image-rendering: pixelated;"
+                    alt="Description of image 1 for step 2">
+            </div>
+            <p>Matching Feature 5:</p>
+            <div class="image-group">
+                <img src="images/featurematch4_0.jpg" style="image-rendering: pixelated;"
+                    alt="Description of image 1 for step 2">
+                <img src="images/featurematch4_1.jpg" style="image-rendering: pixelated;"
+                    alt="Description of image 1 for step 2">
+            </div>
+        </div>
+        <div class="step">
+            <h3>Step 5: Ransac</h3>
+            <p>Finally, we would like to calculate a homography from these points. However, it isn't the best to use all
+                of the points that we have since outliers will have filtered through and they can have a large impact on
+                the final homography. Instead we can use RANSAC in order to find a choice of 4 points that best
+                translates the most correspondences that we have found. This can be done by randomly sampling 4 points
+                in our set of correspondences, calculating the homography between them, calculating the number of other
+                points that match this homogrpahy (within some error). Finally, we simply pick the best homography after
+                repeating this process 5000 times.</p>
+            <div class="image-group">
+                <img src="images/ransac.jpg" alt="Description of image 1 for step 2">
+            </div>
+            <p>Here we can see the inliers that RANSAC was able to calculate.</p>
+        </div>
+        <div class="step">
+            <h3>Results</h3>
+            <p>We can use these calculated homographies in order to perform a fully automatic mosaic on images. Here are
+                the results from the images I took in the beggining</p>
+            <div class="image-group">
+                <img src="images/res1_auto.jpg" alt="Description of image 1 for step 2">
+            </div>
+            <div class="image-group">
+                <img src="images/res2_auto.jpg" alt="Description of image 1 for step 2">
+                <img src="images/res3_auto.jpg" alt="Description of image 1 for step 2">
+            </div>
+        </div>
+    </section>
 </body>
 
 </html>
