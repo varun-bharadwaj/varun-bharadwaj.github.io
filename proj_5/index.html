@@ -1,0 +1,1795 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fun with Diffusion Models</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Header Section -->
+    <header class="header">
+        <h1>Fun with Diffusion Models</h1>
+        <p class="subtitle">Varun Bharadwaj - CS 180</p>
+    </header>
+    <!-- Steps Section -->
+    <h1>Part A: The Power of Diffusion Models</h2>
+        <section class="steps">
+            <div class="step">
+                <h2>Step 0: Setup</h3>
+                    <p>For this project we will be using the DeepFloyd IF Diffusion model. DeepFloyd is a 2 stage model
+                        where
+                        the first stage produces a 64x64 image and the second stage uses the outputs of the first model
+                        to
+                        generate images of size 256x256. Below I have put the outputs from the images using 20 and 200
+                        different
+                        inference steps. </p>
+                    <h4>Model Outputs (Low Inference Steps)</h4>
+                    <p>Here are the outputs of the stage 1 model using 20 inference steps.</p>
+                    <div class="image-group-small">
+                        <figure>
+                            <img src="images/parta0/stage_1_20_0.jpg" , height="64px">
+                            <figcaption>An oil painting of a snowy mountain village</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/parta0/stage_1_20_1.jpg" , height="64px">
+                            <figcaption>A man wearing a hat</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/parta0/stage_1_20_2.jpg" , height="64px">
+                            <figcaption>A rocket ship</figcaption>
+                        </figure>
+                    </div>
+                    <p>Here are the outputs of the stage 2 model using 20 inference steps.</p>
+                    <div class="image-group-small">
+                        <figure>
+                            <img src="images/parta0/stage_2_20_0.jpg" , height="64px">
+                            <figcaption>An oil painting of a snowy mountain village</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/parta0/stage_2_20_1.jpg" , height="64px">
+                            <figcaption>A man wearing a hat</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/parta0/stage_2_20_2.jpg" , height="64px">
+                            <figcaption>A rocket ship</figcaption>
+                        </figure>
+                    </div>
+                    <br>
+                    <h4>Model Outputs (High Inference Steps)</h4>
+                    <p>Here are the outputs of the stage 1 model using 200 inference steps.</p>
+                    <div class="image-group-small">
+                        <figure>
+                            <img src="images/parta0/stage_1_200_0.jpg" , height="64px">
+                            <figcaption>An oil painting of a snowy mountain village</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/parta0/stage_1_200_1.jpg" , height="64px">
+                            <figcaption>A man wearing a hat</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/parta0/stage_1_200_2.jpg" , height="64px">
+                            <figcaption>A rocket ship</figcaption>
+                        </figure>
+                    </div>
+                    <p>Here are the outputs of the stage 2 model using 200 inference steps.</p>
+                    <div class="image-group-small">
+                        <figure>
+                            <img src="images/parta0/stage_2_200_0.jpg" , height="64px">
+                            <figcaption>An oil painting of a snowy mountain village</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/parta0/stage_2_200_1.jpg" , height="64px">
+                            <figcaption>A man wearing a hat</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/parta0/stage_2_200_2.jpg" , height="64px">
+                            <figcaption>A rocket ship</figcaption>
+                        </figure>
+                    </div>
+                    <h4>Quality of the Outputs</h4>
+                    <p>The stage one models, as expected, were lower resolution compared to the stage 2 outputs.
+                        However, there
+                        was quite a substantial difference between the quality of the outputs while using 200 inferences
+                        steps
+                        versus using only 20. Using a higher number of inference steps led to an image with a lot more
+                        detail.
+                        There were a lot of small details that made the images look a lot more realistic with more
+                        steps. The
+                        oil painting of a snowy mountain village had building facades with small snow spots on it. The
+                        rocket
+                        ship had a more realistic rocket exhaust that had a mixture of colors, and was not just a simple
+                        red
+                        line. Furthermore, the rocket even had a small reflection of some celestial body on the window.
+                        However,
+                        the biggest difference was with the man wearing a hat. The diffusion model with 200 inference
+                        steps was
+                        able to generate a very realistic looking man. In the smaller inference steps output, the man's
+                        eyes
+                        were clearly not aligned, furthermore the man had idealized skin without any imperfections which
+                        leads
+                        to an unrealistic look. The hat on his had was also not properly aligned, the man's head is
+                        slightly
+                        tilted, but the hat is perfectly flat. With more inference steps, there was a lot more detail in
+                        the
+                        final image. The man has a more realistic beard and skin, the hat fits his head properly and has
+                        proper
+                        creases that mimics how a hat would sit on a head. Furthermore, the smaller details of his bust
+                        such as
+                        wrinkles, freckles, and eye bags all make him look a lot more realistic.<br><br>
+                        I used the random seed 23 while running the model. </p>
+            </div>
+        </section>
+        <section class="steps">
+            <div class="step">
+                <h2>Part 1: Sampling Loops</h3>
+                    <h3>1.1 Implementing the Forward Process</h3>
+                    <h4>What is the Forward Process</h4>
+                    <p>The forward process takes a clean image and adds noise to it. The amount of noise is based on the
+                        parameter t,
+                        where a low t means a less noisy image and a higher t is a more noisy. The specific way we add
+                        noise to the image
+                        is defined by the following equation. alpha_t here is determined by the developers of
+                        DeepFloydIf and is used to
+                        determine the ratio of original image to noise added.
+                    <div class="image-group-small">
+                        <figure>
+                            <img src="images/parta1_1/forward_eq.png">
+                            <figcaption>Equation to calculate x_t (the noisy image) given alphas_cumprod[t]</figcaption>
+                        </figure>
+                    </div>
+                    </p>
+                    <h4>Forward Process Results</h4>
+                    <div class="image-group-small">
+                        <figure>
+                            <img src="images/parta1_1/no_noise.jpg">
+                            <figcaption>Original Campanile</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/parta1_1/small_noise.jpg">
+                            <figcaption>Noisy Campanile at t=250</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/parta1_1/med_noise.jpg">
+                            <figcaption>Noisy Campanile at t=500</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/parta1_1/large_noise.jpg">
+                            <figcaption>Noisy Campanile at t=750</figcaption>
+                        </figure>
+                    </div>
+            </div>
+            <div class="step">
+                <h3>1.2 Classical Denoising</h3>
+                <p>Previously in the class, we used low pass filters in order to remove noise from an image.
+                    However, due to the
+                    large amounts of noise in these (as is visible in the campanile noised at t=750), the results
+                    are not very good.
+                </p>
+                <h4>Noisy Images</h4>
+                <div class="image-group-small">
+                    <figure>
+                        <img src="images/parta1_1/no_noise.jpg">
+                        <figcaption>Original Campanile</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_1/small_noise.jpg">
+                        <figcaption>Noisy Campanile at t=250</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_1/med_noise.jpg">
+                        <figcaption>Noisy Campanile at t=500</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_1/large_noise.jpg">
+                        <figcaption>Noisy Campanile at t=750</figcaption>
+                    </figure>
+                </div>
+                <h4>Gaussian Blurring Results</h4>
+                <div class="image-group-small">
+                    <figure>
+                        <img src="images/parta1_2/small_denoised.png">
+                        <figcaption>Gaussian blurred Campanile at t=250</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_2/med_denoised.png">
+                        <figcaption>Gaussian blurred Campanile at t=500</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_2/large_denoised.png">
+                        <figcaption>Gaussian blurred Campanile at t=750</figcaption>
+                    </figure>
+                </div>
+            </div>
+            <div class="step">
+                <h3>1.3 One-step Denoising</h3>
+                <p>
+                    We will now use a pretrained diffusion model in order to recover the gaussian noise and clean up
+                    our campenile image.
+                    Below are my results using the one step denoising of the prebuilt diffusion model.
+                </p>
+                <h4>Noisy Images</h4>
+                <div class="image-group-small">
+                    <figure>
+                        <img src="images/parta1_1/no_noise.jpg">
+                        <figcaption>Original Campanile</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_1/small_noise.jpg">
+                        <figcaption>Noisy Campanile at t=250</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_1/med_noise.jpg">
+                        <figcaption>Noisy Campanile at t=500</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_1/large_noise.jpg">
+                        <figcaption>Noisy Campanile at t=750</figcaption>
+                    </figure>
+                </div>
+                <h4>One Step Denoising Results</h4>
+                <div class="image-group-small">
+                    <figure>
+                        <img src="images/parta1_3/u_net_denoised250.jpg">
+                        <figcaption>One Step Denoised Campanile at t=250</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_3/u_net_denoised500.jpg">
+                        <figcaption>One Step Denoised Campanile at t=500</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_3/u_net_denoised750.jpg">
+                        <figcaption>One Step Denoised Campanile at t=750</figcaption>
+                    </figure>
+                </div>
+            </div>
+            <div class="step">
+                <h3>1.3 One-step Denoising</h3>
+                <p>
+                    These diffusion models were not trained in order denoise super noisy images back to the natural
+                    image manifold
+                    in one step. They are much better at iteratively denoising the images across multiple steps. We
+                    can use this, to
+                    iteratively denoise our noisy images back onto this natural manifold. Below are the results
+                    doing so.
+                </p>
+                <h4>Iteratively Denoised Images</h4>
+                <div class="image-group-small">
+                    <figure>
+                        <img src="images/parta1_4/denoised_990.png">
+                        <figcaption>Iteratively Step Denoised Campanile at t=690</figcaption>
+                    </figure>
+
+                    <figure>
+                        <img src="images/parta1_4/denoised_840.png">
+                        <figcaption>Iteratively Step Denoised Campanile at t=540</figcaption>
+                    </figure>
+
+                    <figure>
+                        <img src="images/parta1_4/denoised_690.png">
+                        <figcaption>Iteratively Step Denoised Campanile at t=390</figcaption>
+                    </figure>
+
+                    <figure>
+                        <img src="images/parta1_4/denoised_540.png">
+                        <figcaption>Iteratively Step Denoised Campanile at t=240</figcaption>
+                    </figure>
+
+                    <figure>
+                        <img src="images/parta1_4/denoised_390.png">
+                        <figcaption>Iteratively Step Denoised Campanile at t=90</figcaption>
+                    </figure>
+                </div>
+                <h4> Final Results </h4>
+                <div class="image-group-small">
+                    <figure>
+                        <img src="images/parta1_1/no_noise.jpg">
+                        <figcaption>Original Campenile</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_4/denoised_full.png">
+                        <figcaption>Fully Denoised Campanile (Iterative Denoising)</figcaption>
+                    </figure>
+
+                    <figure>
+                        <img src="images/parta1_3/u_net_denoised750.jpg">
+                        <figcaption>Fully Denoised Campanile (One Step Denoising)</figcaption>
+                    </figure>
+
+                    <figure>
+                        <img src="images/parta1_2/large_denoised.png">
+                        <figcaption>Gaussian Denoised</figcaption>
+                    </figure>
+                </div>
+                <p>Below is a illustartion showing the foll iterative denoising process in work</p>
+                <div class="image-group-small">
+                    <figure>
+                        <img src="images/parta1_4/1_4_iterative_denoise.gif">
+                </div>
+            </div>
+            <div class="step">
+                <h3>1.5 Sampling from Diffusion Model</h3>
+                <p>
+                    We can now sample random images from the diffusion model by passing in random noise instead of
+                    our
+                    original noised campenile. Below are 5 random outputs
+                </p>
+                <h4>Sampled Images</h4>
+                <div class="image-group-small">
+                    <figure>
+                        <img src="images/parta1_5/s0.png">
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_5/s1.png">
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_5/s2.png">
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_5/s3.png">
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_5/s4.png">
+                    </figure>
+                </div>
+                <h4>Gifs Showing Sampling Process</h4>
+                <div class="image-group-small">
+                    <figure>
+                        <img src="images/parta1_5/s0.gif">
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_5/s1.gif">
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_5/s2.gif">
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_5/s3.gif">
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_5/s4.gif">
+                    </figure>
+                </div>
+            </div>
+            <div class="step">
+                <h3>1.6 Classifier Free Guidance</h3>
+                <p>
+                    The quality of the images that were generated in the previous image where not very good. To
+                    improve this
+                    we implement classifier free guidance that allows us to generate higher quality images using
+                    both a conditional
+                    and unconditional outputs and scaling our noise to be a linear extrapolation of the 2. Below are
+                    my samples
+                    using CFG.
+                </p>
+                <h4>Sampled Images</h4>
+                <div class="image-group-small">
+                    <figure>
+                        <img src="images/parta1_6/cfg_0.png">
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_6/cfg_1.png">
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_6/cfg_2.png">
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_6/cfg_3.png">
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_6/cfg_4.png">
+                    </figure>
+                </div>
+                <h4>Gifs Showing Sampling Process</h4>
+                <div class="image-group-small">
+                    <figure>
+                        <img src="images/parta1_6/cfg_0.gif">
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_6/cfg_1.gif">
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_6/cfg_2.gif">
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_6/cfg_3.gif">
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_6/cfg_4.gif">
+                    </figure>
+                </div>
+            </div>
+            <div class="step">
+                <h3>1.7 Image to Image Translation</h3>
+                <p>
+                    We can use this sampling loop to edit our images by adding some noise, and then using the
+                    diffusion model to
+                    cast this noisy image back onto the natural manifold of images. Below are my reuslts
+                </p>
+                <h4>Original Images</h4>
+                <div class="image-group-small">
+                    <figure>
+                        <img src="images/parta1_7_1/no_noise.jpg">
+                        <figcaption>Original Campanile</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_1/jj.jpg">
+                        <figcaption>Original JJ McCarthy</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_1/frog.jpg">
+                        <figcaption>Original Frog</figcaption>
+                    </figure>
+                </div>
+                <h4>Image to Image translation of Campanile</h4>
+                <div class="image-group-small">
+                    <figure>
+                        <img src="images/parta1_7_1/camp_0.png">
+                        <figcaption>Campanile at starting_index = 1</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_1/camp_1.png">
+                        <figcaption>Campanile at starting_index = 3</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_1/camp_2.png">
+                        <figcaption>Campanile at starting_index = 5</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_1/camp_3.png">
+                        <figcaption>Campanile at starting_index = 7</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_1/camp_4.png">
+                        <figcaption>Campanile at starting_index = 10</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_1/camp_5.png">
+                        <figcaption>Campanile at starting_index = 20</figcaption>
+                    </figure>
+                </div>
+                <div class="image-group-small">
+                    <figure>
+                        <img src="images/parta1_7_1/camp_0.gif">
+                        <figcaption>Campanile at starting_index = 1</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_1/camp_1.gif">
+                        <figcaption>Campanile at starting_index = 3</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_1/camp_2.gif">
+                        <figcaption>Campanile at starting_index = 5</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_1/camp_3.gif">
+                        <figcaption>Campanile at starting_index = 7</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_1/camp_4.gif">
+                        <figcaption>Campanile at starting_index = 10</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_1/camp_5.gif">
+                        <figcaption>Campanile at starting_index = 20</figcaption>
+                    </figure>
+                </div>
+
+
+                <h4>Image to Image translation of JJ McCarthy</h4>
+                <div class="image-group-small">
+                    <figure>
+                        <img src="images/parta1_7_1/jj_0.png">
+                        <figcaption>JJ McCarthy at starting_index = 1</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_1/jj_1.png">
+                        <figcaption>JJ McCarthy at starting_index = 3</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_1/jj_2.png">
+                        <figcaption>JJ McCarthy at starting_index = 5</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_1/jj_3.png">
+                        <figcaption>JJ McCarthy at starting_index = 7</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_1/jj_4.png">
+                        <figcaption>JJ McCarthy at starting_index = 10</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_1/jj_5.png">
+                        <figcaption>JJ McCarthy at starting_index = 20</figcaption>
+                    </figure>
+                </div>
+                <div class="image-group-small">
+                    <figure>
+                        <img src="images/parta1_7_1/jj_0.gif">
+                        <figcaption>JJ McCarthy at starting_index = 1</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_1/jj_1.gif">
+                        <figcaption>JJ McCarthy at starting_index = 3</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_1/jj_2.gif">
+                        <figcaption>JJ McCarthy at starting_index = 5</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_1/jj_3.gif">
+                        <figcaption>JJ McCarthy at starting_index = 7</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_1/jj_4.gif">
+                        <figcaption>JJ McCarthy at starting_index = 10</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_1/jj_5.gif">
+                        <figcaption>JJ McCarthy at starting_index = 20</figcaption>
+                    </figure>
+                </div>
+
+                <h4>Image to Image translation of Mr. Frog</h4>
+                <div class="image-group-small">
+                    <figure>
+                        <img src="images/parta1_7_1/frog_0.png">
+                        <figcaption>Frog at starting_index = 1</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_1/frog_1.png">
+                        <figcaption>Frog at starting_index = 3</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_1/frog_2.png">
+                        <figcaption>Frog at starting_index = 5</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_1/frog_3.png">
+                        <figcaption>Frog at starting_index = 7</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_1/frog_4.png">
+                        <figcaption>Frog at starting_index = 10</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_1/frog_5.png">
+                        <figcaption>Frog at starting_index = 20</figcaption>
+                    </figure>
+                </div>
+                <div class="image-group-small">
+                    <figure>
+                        <img src="images/parta1_7_1/frog_0.gif">
+                        <figcaption>Frog at starting_index = 1</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_1/frog_1.gif">
+                        <figcaption>Frog at starting_index = 3</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_1/frog_2.gif">
+                        <figcaption>Frog at starting_index = 5</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_1/frog_3.gif">
+                        <figcaption>Frog at starting_index = 7</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_1/frog_4.gif">
+                        <figcaption>Frog at starting_index = 10</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_1/frog_5.gif">
+                        <figcaption>Frog at starting_index = 20</figcaption>
+                    </figure>
+                </div>
+
+                <h3>Hand Drawn Images</h3>
+                <p>We can do a similar process to what we did in the previous part in order to project hand drawn images
+                    onto what the moel thinks is the natural manifold of images.</p>
+                <h4>Minecraft</h4>
+                <div class="image-group-small">
+                    <figure>
+                        <img src="images/parta1_7_2/minecraft_original.png">
+                        <figcaption>Minecraft Original</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_2/minecraft_1.png">
+                        <figcaption>SDEEdit of Minecraft starting_index = 1</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_2/minecraft_3.png">
+                        <figcaption>SDEEdit of Minecraft starting_index = 3</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_2/minecraft_5.png">
+                        <figcaption>SDEEdit of Minecraft starting_index = 5</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_2/minecraft_7.png">
+                        <figcaption>SDEEdit of Minecraft starting_index = 7</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_2/minecraft_10.png">
+                        <figcaption>SDEEdit of Minecraft starting_index = 10</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_2/minecraft_20.png">
+                        <figcaption>SDEEdit of Minecraft starting_index = 20</figcaption>
+                    </figure>
+                </div>
+                <h4>Football</h4>
+                <div class="image-group-small">
+                    <figure>
+                        <img src="images/parta1_7_2/football_original.png">
+                        <figcaption>Football Original</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_2/football_1.png">
+                        <figcaption>SDEEdit of Football starting_index = 1</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_2/football_3.png">
+                        <figcaption>SDEEdit of Football starting_index = 3</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_2/football_5.png">
+                        <figcaption>SDEEdit of Football starting_index = 5</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_2/football_7.png">
+                        <figcaption>SDEEdit of Football starting_index = 7</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_2/football_10.png">
+                        <figcaption>SDEEdit of Football starting_index = 10</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_2/football_20.png">
+                        <figcaption>SDEEdit of Football starting_index = 20</figcaption>
+                    </figure>
+                </div>
+
+                <h4>Football</h4>
+                <div class="image-group-small">
+                    <figure>
+                        <img src="images/parta1_7_2/beach_original.png">
+                        <figcaption>Beach Original</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_2/beach_1.png">
+                        <figcaption>SDEEdit of Beach starting_index = 1</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_2/beach_3.png">
+                        <figcaption>SDEEdit of Beach starting_index = 3</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_2/beach_5.png">
+                        <figcaption>SDEEdit of Beach starting_index = 5</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_2/beach_7.png">
+                        <figcaption>SDEEdit of Beach starting_index = 7</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_2/beach_10.png">
+                        <figcaption>SDEEdit of Beach starting_index = 10</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_2/beach_20.png">
+                        <figcaption>SDEEdit of Beach starting_index = 20</figcaption>
+                    </figure>
+                </div>
+                <h3>Image Inpainting</h3>
+                <p>This diffusion model sampling is super powerful. We can use it in order to fill in images that are
+                    missing a mask. Below we can see some examples.</p>
+                <h4>Image Inpainting of Campenile</h4>
+                <div class="image-group-small">
+                    <figure>
+                        <img src="images/parta1_7_3/camp_og.png">
+                        <figcaption>Original Campenile</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_3/camp_mask.png">
+                        <figcaption>Mask of Campenile</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_3/camp_to_replace.png">
+                        <figcaption>Part of Image to Replace</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_3/camp_in.png">
+                        <figcaption>Final Result</figcaption>
+                    </figure>
+                </div>
+                <h4>Image Inpainting of Lebron's Block</h4>
+                <div class="image-group-small">
+                    <figure>
+                        <img src="images/parta1_7_3/le_block_og.png">
+                        <figcaption>Original Lebron Block</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_3/le_block_mask.png">
+                        <figcaption>Mask of Lebron Block</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_3/le_block_to_replace.png">
+                        <figcaption>Part of Image to Replace</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_3/le_block_in.png">
+                        <figcaption>Final Result</figcaption>
+                    </figure>
+                </div>
+
+                <h4>Image Inpainting of SF Skyline</h4>
+                <div class="image-group-small">
+                    <figure>
+                        <img src="images/parta1_7_3/bridge_og.png">
+                        <figcaption>Original Skyline</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_3/bridge_mask.png">
+                        <figcaption>Mask of Skyline</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_3/bridge_to_replace.png">
+                        <figcaption>Part of Image to Replace</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_3/bridge_in.png">
+                        <figcaption>Final Result</figcaption>
+                    </figure>
+                </div>
+                <h3>Text Conditioned Image to Image</h3>
+                <p>We can also add text conditioning to change one image into another image based off of a text prompt
+                </p>
+                <h4>Campenile onto "a rocket ship"</h4>
+                <div class="image-group-small">
+                    <figure>
+                        <img src="images/parta1_7_3/camp_og.png">
+                        <figcaption>Original Campenile</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_4/rocket_camp0.jpg">
+                        <figcaption>Campanile at starting_index = 1</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_4/rocket_camp1.jpg">
+                        <figcaption>Campanile at starting_index = 3</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_4/rocket_camp2.jpg">
+                        <figcaption>Campanile at starting_index = 5</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_4/rocket_camp3.jpg">
+                        <figcaption>Campanile at starting_index = 7</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_4/rocket_camp4.jpg">
+                        <figcaption>Campanile at starting_index = 10</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_4/rocket_camp5.jpg">
+                        <figcaption>Campanile at starting_index = 20</figcaption>
+                    </figure>
+                </div>
+                <h4>Lebron's Block onto "an oil painting of a snowy mountain village"</h4>
+                <div class="image-group-small">
+                    <figure>
+                        <img src="images/parta1_7_3/le_block_og.png">
+                        <figcaption>Original Lebron Block</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_4/levillage0.jpg">
+                        <figcaption>Lebron Block at starting_index = 1</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_4/levillage1.jpg">
+                        <figcaption>Lebron Block at starting_index = 3</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_4/levillage2.jpg">
+                        <figcaption>Lebron Block at starting_index = 5</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_4/levillage3.jpg">
+                        <figcaption>Lebron Block at starting_index = 7</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_4/levillage4.jpg">
+                        <figcaption>Lebron Block at starting_index = 10</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_4/levillage5.jpg">
+                        <figcaption>Lebron Block at starting_index = 20</figcaption>
+                    </figure>
+                </div>
+                <h4>Just a Chill Guy onto "a man wearing a hat"</h4>
+                <div class="image-group-small">
+                    <figure>
+                        <img src="images/parta1_7_4/chill_og.png">
+                        <figcaption>Original Chill Guy</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_4/chillhat0.jpg">
+                        <figcaption>Chill Guy at starting_index = 1</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_4/chillhat1.jpg">
+                        <figcaption>Chill Guy at starting_index = 3</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_4/chillhat2.jpg">
+                        <figcaption>Chill Guy at starting_index = 5</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_4/chillhat3.jpg">
+                        <figcaption>Chill Guy at starting_index = 7</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_4/chillhat4.jpg">
+                        <figcaption>Chill Guy at starting_index = 10</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_7_4/chillhat5.jpg">
+                        <figcaption>Chill Guy at starting_index = 20</figcaption>
+                    </figure>
+                </div>
+
+            </div>
+            <div class="step">
+                <h3>1.8 Visual Anagrams</h3>
+                <p>
+                    We can use the diffusion models to do some other cooler things as well. We can at each iterative
+                    denoising step, combine the outputs from one point facing straight and from another point upside
+                    down to get visual anagrams. These images that are generated look like one text prompt facing up and
+                    a different one facing down.
+                </p>
+                <h4>Visual Anagrams</h4>
+                <div class="image-group-small">
+                    <figure>
+                        <img src="images/parta1_8/flip_1.png">
+                        <figcaption>An Oil Painting of People around a Campfire</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_8/normal_1.png">
+                        <figcaption>An Oil Painting of an Old Man</figcaption>
+                    </figure>
+                </div>
+                <div class="image-group-small">
+                    <figure>
+                        <img src="images/parta1_8/flipper_normal_2.png">
+                        <figcaption>A (rather disturbing) Photo of a man</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_8/flipper_flip_2.png">
+                        <figcaption>A photo of a dog</figcaption>
+                    </figure>
+                </div>
+
+                <div class="image-group-small">
+                    <figure>
+                        <img src="images/parta1_8/flipper_normal_3.png">
+                        <figcaption>An olympics medal ceremony</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_8/flipper_flip_3.png">
+                        <figcaption>A photo of the swiss alps</figcaption>
+                    </figure>
+                </div>
+            </div>
+            <div class="step">
+                <h3>1.9 Hybrid Images</h3>
+                <p>
+                    Similar to the previous one, we can use the diffusion model to generate images that look like one
+                    thing
+                    from up close and like a different prompt from farther away. The results can be achieved by low pass
+                    filtering one model output and high pass filtering the other one to get a hybrid image similar to
+                    how we
+                    did in project 2.
+                </p>
+                <h4>Visual Anagrams</h4>
+                <div class="image-group-small">
+                    <figure>
+                        <img src="images/parta1_9/hybrid_1.png">
+                        <figcaption>A Hybrid of a skull and a waterfall</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_9/hybrid_2.png">
+                        <figcaption>A Hybrid of a rocket ship and a pencil</figcaption>
+                    </figure>
+                    <figure>
+                        <img src="images/parta1_9/hybrid_3.png">
+                        <figcaption>A Hybrid of a dog and the amalfi coast</figcaption>
+                    </figure>
+
+                </div>
+
+            </div>
+        </section>
+        <h1>Part B: The Power of Diffusion Models</h2>
+            <section class="steps">
+                <div class="step">
+                    <h2>Step 1: Training the Unconditional Unet</h3>
+                    <h4>Noise Addition</h4>
+                    <p>Below i put examples of noise below</p>  
+                    <div class="image-group-small">
+                        <figure>
+                            <img src="images/partb_1/0_0.0.jpg">
+                            <figcaption>0</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb_1/0_0.2.jpg">
+                            <figcaption>0.2</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb_1/0_0.4.jpg">
+                            <figcaption>0.4</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb_1/0_0.5.jpg">
+                            <figcaption>0.5</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb_1/0_0.6.jpg">
+                            <figcaption>0.6</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb_1/0_0.8.jpg">
+                            <figcaption>0.8</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb_1/0_1.0.jpg">
+                            <figcaption>1.0</figcaption>
+                        </figure>
+                    </div>
+                    <div class="image-group-small">
+                        <figure>
+                            <img src="images/partb_1/1_0.0.jpg">
+                            <figcaption>0</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb_1/1_0.2.jpg">
+                            <figcaption>0.2</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb_1/1_0.4.jpg">
+                            <figcaption>0.4</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb_1/1_0.5.jpg">
+                            <figcaption>0.5</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb_1/1_0.6.jpg">
+                            <figcaption>0.6</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb_1/1_0.8.jpg">
+                            <figcaption>0.8</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb_1/1_1.0.jpg">
+                            <figcaption>1.0</figcaption>
+                        </figure>
+                    </div>
+
+                    <div class="image-group-small">
+                        <figure>
+                            <img src="images/partb_1/2_0.0.jpg">
+                            <figcaption>0</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb_1/2_0.2.jpg">
+                            <figcaption>0.2</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb_1/2_0.4.jpg">
+                            <figcaption>0.4</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb_1/2_0.5.jpg">
+                            <figcaption>0.5</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb_1/2_0.6.jpg">
+                            <figcaption>0.6</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb_1/2_0.8.jpg">
+                            <figcaption>0.8</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb_1/2_1.0.jpg">
+                            <figcaption>1.0</figcaption>
+                        </figure>
+                    </div>
+                    <p>Here is the loss graph for the training process for the unconditional unet</p>
+                    <div class="image-group-small">
+                        <figure>
+                            <img src="images/loss/loss1.png">
+                            <figcaption>Loss graph of training the model</figcaption>
+                        </figure>
+                    </div>
+                    <h3>First Epoch Output</h3>
+                    <p>Here are the results after the first epochs</p>
+                    <div class="image-group-small">
+                        <figure>
+                            <img src="images/partb/0_1_in.jpg">
+                            <figcaption>Input image</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb/0_1_noise.jpg">
+                            <figcaption>Noise with sigma in 0.5</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb/0_1_out.jpg">
+                            <figcaption>Denoised by model</figcaption>
+                        </figure>
+                    </div>
+                    <div class="image-group-small">
+                        <figure>
+                            <img src="images/partb/2_1_in.jpg">
+                            <figcaption>Input image</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb/2_1_noise.jpg">
+                            <figcaption>Noise with sigma in 0.5</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb/2_1_out.jpg">
+                            <figcaption>Denoised by model</figcaption>
+                        </figure>
+                    </div>
+                    <div class="image-group-small">
+                        <figure>
+                            <img src="images/partb/3_1_in.jpg">
+                            <figcaption>Input image</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb/3_1_noise.jpg">
+                            <figcaption>Noise with sigma in 0.5</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb/3_1_out.jpg">
+                            <figcaption>Denoised by model</figcaption>
+                        </figure>
+                    </div>
+                    <div class="image-group-small">
+                        <figure>
+                            <img src="images/partb/4_1_in.jpg">
+                            <figcaption>Input image</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb/4_1_noise.jpg">
+                            <figcaption>Noise with sigma in 0.5</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb/4_1_out.jpg">
+                            <figcaption>Denoised by model</figcaption>
+                        </figure>
+                    </div>
+                    <h3>Fifth Epoch Output</h3>
+                    <p>Here are the results after the first 5 epochs</p>
+                    <div class="image-group-small">
+                        <figure>
+                            <img src="images/partb/0_5_in.jpg">
+                            <figcaption>Input image</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb/0_5_noise.jpg">
+                            <figcaption>Noise with sigma in 0.5</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb/0_5_out.jpg">
+                            <figcaption>Denoised by model</figcaption>
+                        </figure>
+                    </div>
+                    <div class="image-group-small">
+                        <figure>
+                            <img src="images/partb/2_5_in.jpg">
+                            <figcaption>Input image</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb/2_5_noise.jpg">
+                            <figcaption>Noise with sigma in 0.5</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb/2_5_out.jpg">
+                            <figcaption>Denoised by model</figcaption>
+                        </figure>
+                    </div>
+                    <div class="image-group-small">
+                        <figure>
+                            <img src="images/partb/3_5_in.jpg">
+                            <figcaption>Input image</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb/3_5_noise.jpg">
+                            <figcaption>Noise with sigma in 0.5</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb/3_5_out.jpg">
+                            <figcaption>Denoised by model</figcaption>
+                        </figure>
+                    </div>
+                    <div class="image-group-small">
+                        <figure>
+                            <img src="images/partb/4_5_in.jpg">
+                            <figcaption>Input image</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb/4_5_noise.jpg">
+                            <figcaption>Noise with sigma in 0.5</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb/4_5_out.jpg">
+                            <figcaption>Denoised by model</figcaption>
+                        </figure>
+                    </div>
+
+                    <h3>Out-of-distributions output</h3>
+                    <p>Here are the results after the first 5 epochs on out of output data</p>
+                    <p>Set 1</p>
+                    <div class="image-group-small">
+                        <figure>
+                            <img src="images/partb_1/0_0.0.jpg">
+                            <figcaption>0</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb_1/0_0.2.jpg">
+                            <figcaption>0.2</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb_1/0_0.4.jpg">
+                            <figcaption>0.4</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb_1/0_0.5.jpg">
+                            <figcaption>0.5</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb_1/0_0.6.jpg">
+                            <figcaption>0.6</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb_1/0_0.8.jpg">
+                            <figcaption>0.8</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb_1/0_1.0.jpg">
+                            <figcaption>1.0</figcaption>
+                        </figure>
+                    </div>
+                    <div class="image-group-small">
+                        <figure>
+                            <img src="images/partb/0_ood_0.0_noise.jpg">
+                            <figcaption>Denoised with sigma in 0.0</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb/0_ood_0.2_noise.jpg">
+                            <figcaption>Denoised with sigma in 0.2</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb/0_ood_0.4_noise.jpg">
+                            <figcaption>Denoised with sigma in 0.4</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb/0_ood_0.5_noise.jpg">
+                            <figcaption>Denoised with sigma in 0.5</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb/0_ood_0.6_noise.jpg">
+                            <figcaption>Denoised with sigma in 0.6</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb/0_ood_0.8_noise.jpg">
+                            <figcaption>Denoised with sigma in 0.8</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb/0_ood_1.0_noise.jpg">
+                            <figcaption>Denoised with sigma in 1.0</figcaption>
+                        </figure>
+                    </div>
+                    <p>Set 2</p>
+                    <div class="image-group-small">
+                        <figure>
+                            <img src="images/partb_1/1_0.0.jpg">
+                            <figcaption>0</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb_1/1_0.2.jpg">
+                            <figcaption>0.2</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb_1/1_0.4.jpg">
+                            <figcaption>0.4</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb_1/1_0.5.jpg">
+                            <figcaption>0.5</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb_1/1_0.6.jpg">
+                            <figcaption>0.6</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb_1/1_0.8.jpg">
+                            <figcaption>0.8</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb_1/1_1.0.jpg">
+                            <figcaption>1.0</figcaption>
+                        </figure>
+                    </div>
+                    <div class="image-group-small">
+                        <figure>
+                            <img src="images/partb/1_ood_0.0_noise.jpg">
+                            <figcaption>Denoised with sigma in 0.0</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb/1_ood_0.2_noise.jpg">
+                            <figcaption>Denoised with sigma in 0.2</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb/1_ood_0.4_noise.jpg">
+                            <figcaption>Denoised with sigma in 0.4</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb/1_ood_0.5_noise.jpg">
+                            <figcaption>Denoised with sigma in 0.5</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb/1_ood_0.6_noise.jpg">
+                            <figcaption>Denoised with sigma in 0.6</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb/1_ood_0.8_noise.jpg">
+                            <figcaption>Denoised with sigma in 0.8</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb/1_ood_1.0_noise.jpg">
+                            <figcaption>Denoised with sigma in 1.0</figcaption>
+                        </figure>
+                    </div>
+                    <p>Set 3</p>
+                    <div class="image-group-small">
+                        <figure>
+                            <img src="images/partb_1/2_0.0.jpg">
+                            <figcaption>0</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb_1/2_0.2.jpg">
+                            <figcaption>0.2</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb_1/2_0.4.jpg">
+                            <figcaption>0.4</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb_1/2_0.5.jpg">
+                            <figcaption>0.5</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb_1/2_0.6.jpg">
+                            <figcaption>0.6</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb_1/2_0.8.jpg">
+                            <figcaption>0.8</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb_1/2_1.0.jpg">
+                            <figcaption>1.0</figcaption>
+                        </figure>
+                    </div>
+                    <div class="image-group-small">
+                        <figure>
+                            <img src="images/partb/2_ood_0.0_noise.jpg">
+                            <figcaption>Denoised with sigma in 0.0</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb/2_ood_0.2_noise.jpg">
+                            <figcaption>Denoised with sigma in 0.2</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb/2_ood_0.4_noise.jpg">
+                            <figcaption>Denoised with sigma in 0.4</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb/2_ood_0.5_noise.jpg">
+                            <figcaption>Denoised with sigma in 0.5</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb/2_ood_0.6_noise.jpg">
+                            <figcaption>Denoised with sigma in 0.6</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb/2_ood_0.8_noise.jpg">
+                            <figcaption>Denoised with sigma in 0.8</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/partb/2_ood_1.0_noise.jpg">
+                            <figcaption>Denoised with sigma in 1.0</figcaption>
+                        </figure>
+                    </div>
+
+                </div>
+
+                <div class="step">
+                    <h2>Step 2: Training the Time Dependent Unet</h3>
+                    <h4>What's new</h4>
+                    <p>Here we are going to train a iterative denosier diffusion model. Below is my loss curve.</p>  
+                    <div class="image-group-small">
+                        <figure>
+                            <img src="images/loss/loss2.png">
+                            <figcaption>Loss Curve</figcaption>
+                        </figure>
+                    </div>
+                    <p>Here are outputs after 5 epochs</p>
+                    <div class="image-group-small">
+                        <figure>
+                            <img src="images/time_dep/time_dep_0.png">
+                            <figcaption>Output 0</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/time_dep/time_dep_1.png">
+                            <figcaption>Output 1</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/time_dep/time_dep_2.png">
+                            <figcaption>Output 2</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/time_dep/time_dep_3.png">
+                            <figcaption>Output 3</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/time_dep/time_dep_4.png">
+                            <figcaption>Output 4</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/time_dep/time_dep_5.png">
+                            <figcaption>Output 5</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/time_dep/time_dep_6.png">
+                            <figcaption>Output 6</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/time_dep/time_dep_7.png">
+                            <figcaption>Output 7</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/time_dep/time_dep_8.png">
+                            <figcaption>Output 8</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/time_dep/time_dep_9.png">
+                            <figcaption>Output 9</figcaption>
+                        </figure>
+                    </div>
+                    <p>Here are outputs after 2 epochs</p>
+                    <div class="image-group-small">
+                        <figure>
+                            <img src="images/time_dep/20time_dep_0.png">
+                            <figcaption>Output 0</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/time_dep/20time_dep_1.png">
+                            <figcaption>Output 1</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/time_dep/20time_dep_2.png">
+                            <figcaption>Output 2</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/time_dep/20time_dep_3.png">
+                            <figcaption>Output 3</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/time_dep/20time_dep_4.png">
+                            <figcaption>Output 4</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/time_dep/20time_dep_5.png">
+                            <figcaption>Output 5</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/time_dep/20time_dep_6.png">
+                            <figcaption>Output 6</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/time_dep/20time_dep_7.png">
+                            <figcaption>Output 7</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/time_dep/20time_dep_8.png">
+                            <figcaption>Output 8</figcaption>
+                        </figure>
+                        <figure>
+                            <img src="images/time_dep/20time_dep_9.png">
+                            <figcaption>Output 9</figcaption>
+                        </figure>
+                    </div>
+                </div>
+
+
+                <div class="step">
+                    <h2>Step 3: Training the Class Dependent Unet</h3>
+                    <h4>Class Dependent</h4>
+                    <p>Here we are going to train a iterative denosier diffusion model that accounts for the digits. Below is my loss curve.</p>  
+                    <div class="image-group-small">
+                        <figure>
+                            <img src="images/loss/loss3.png">
+                            <figcaption>Loss Curve</figcaption>
+                        </figure>
+                    </div>
+                    <p>Here are outputs after 5 epochs</p>
+                    <div class="image-group-small">
+                        <figure>
+                            <img src="images/class/5epoch/class0_0out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/class1_0out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/class2_0out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/class3_0out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/class4_0out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/class5_0out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/class6_0out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/class7_0out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/class8_0out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/class9_0out.png">
+                        </figure>
+                    </div>
+                    <div class="image-group-small">
+                        <figure>
+                            <img src="images/class/5epoch/class0_1out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/class1_1out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/class2_1out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/class3_1out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/class4_1out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/class5_1out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/class6_1out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/class7_1out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/class8_1out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/class9_1out.png">
+                        </figure>
+                    </div>
+                    <div class="image-group-small">
+                        <figure>
+                            <img src="images/class/5epoch/class0_2out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/class1_2out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/class2_2out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/class3_2out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/class4_2out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/class5_2out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/class6_2out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/class7_2out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/class8_2out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/class9_2out.png">
+                        </figure>
+                    </div>
+                    <div class="image-group-small">
+                        <figure>
+                            <img src="images/class/5epoch/class0_3out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/class1_3out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/class2_3out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/class3_3out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/class4_3out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/class5_3out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/class6_3out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/class7_3out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/class8_3out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/class9_3out.png">
+                        </figure>
+                    </div>
+                    <p>Here are outputs after 20 epochs</p>
+                    <div class="image-group-small">
+                        <figure>
+                            <img src="images/class/5epoch/20class0_0out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/20class1_0out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/20class2_0out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/20class3_0out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/20class4_0out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/20class5_0out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/20class6_0out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/20class7_0out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/20class8_0out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/20class9_0out.png">
+                        </figure>
+                    </div>
+                    <div class="image-group-small">
+                        <figure>
+                            <img src="images/class/5epoch/20class0_1out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/20class1_1out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/20class2_1out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/20class3_1out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/20class4_1out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/20class5_1out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/20class6_1out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/20class7_1out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/20class8_1out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/20class9_1out.png">
+                        </figure>
+                    </div>
+                    <div class="image-group-small">
+                        <figure>
+                            <img src="images/class/5epoch/20class0_2out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/20class1_2out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/20class2_2out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/20class3_2out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/20class4_2out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/20class5_2out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/20class6_2out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/20class7_2out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/20class8_2out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/20class9_2out.png">
+                        </figure>
+                    </div>
+                    <div class="image-group-small">
+                        <figure>
+                            <img src="images/class/5epoch/20class0_3out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/20class1_3out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/20class2_3out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/20class3_3out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/20class4_3out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/20class5_3out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/20class6_3out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/20class7_3out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/20class8_3out.png">
+                        </figure>
+                        <figure>
+                            <img src="images/class/5epoch/20class9_3out.png">
+                        </figure>
+                    </div>
+                </div>
+            <h3>Bells and Whistles: GIFs</h3>
+            <div class="image-group-small">
+                <figure>
+                    <img src="images/gifs/gif1_0.gif">
+                </figure>
+                <figure>
+                    <img src="images/gifs/gif1_1.gif">
+                </figure>
+                <figure>
+                    <img src="images/gifs/gif1_2.gif">
+                </figure>
+                <figure>
+                    <img src="images/gifs/gif1_3.gif">
+                </figure>
+                <figure>
+                    <img src="images/gifs/gif1_4.gif">
+                </figure>
+                <figure>
+                    <img src="images/gifs/gif1_5.gif">
+                </figure>
+                <figure>
+                    <img src="images/gifs/gif1_6.gif">
+                </figure>
+                <figure>
+                    <img src="images/gifs/gif1_7.gif">
+                </figure>
+                <figure>
+                    <img src="images/gifs/gif1_8.gif">
+                </figure>
+                <figure>
+                    <img src="images/gifs/gif1_9.gif">
+                </figure>
+            </div>
+            <div class="image-group-small">
+                <figure>
+                    <img src="images/gifs/gif2_0.gif">
+                </figure>
+                <figure>
+                    <img src="images/gifs/gif2_1.gif">
+                </figure>
+                <figure>
+                    <img src="images/gifs/gif2_2.gif">
+                </figure>
+                <figure>
+                    <img src="images/gifs/gif2_3.gif">
+                </figure>
+                <figure>
+                    <img src="images/gifs/gif2_4.gif">
+                </figure>
+                <figure>
+                    <img src="images/gifs/gif2_5.gif">
+                </figure>
+                <figure>
+                    <img src="images/gifs/gif2_6.gif">
+                </figure>
+                <figure>
+                    <img src="images/gifs/gif2_7.gif">
+                </figure>
+                <figure>
+                    <img src="images/gifs/gif2_8.gif">
+                </figure>
+                <figure>
+                    <img src="images/gifs/gif2_9.gif">
+                </figure>
+            </div>
+            <div class="image-group-small">
+                <figure>
+                    <img src="images/gifs/gif3_0.gif">
+                </figure>
+                <figure>
+                    <img src="images/gifs/gif3_1.gif">
+                </figure>
+                <figure>
+                    <img src="images/gifs/gif3_2.gif">
+                </figure>
+                <figure>
+                    <img src="images/gifs/gif3_3.gif">
+                </figure>
+                <figure>
+                    <img src="images/gifs/gif3_4.gif">
+                </figure>
+                <figure>
+                    <img src="images/gifs/gif3_5.gif">
+                </figure>
+                <figure>
+                    <img src="images/gifs/gif3_6.gif">
+                </figure>
+                <figure>
+                    <img src="images/gifs/gif3_7.gif">
+                </figure>
+                <figure>
+                    <img src="images/gifs/gif3_8.gif">
+                </figure>
+                <figure>
+                    <img src="images/gifs/gif3_9.gif">
+                </figure>
+            </div>
+        </div>
+    </section>
+        
+
+</body>
+
+</html>
