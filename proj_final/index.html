@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neural Radiance Fields</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <!-- Header Section -->
+    <header class="header">
+        <h1>Neural Radiance Field!</h1>
+        <p class="subtitle">Varun Bharadwaj - CS 180</p>
+    </header>
+    <!-- Steps Section -->
+    <section class="steps">
+        <h2>Part 1: Fit a Neural Field to a 2d Image</h2>
+        <section class="step">
+            <h3>Implemenation Details</h3>
+            Below is a description of the model that I used in order to create this Neural Field. This model is the
+            simple multi-layer perceptron that was described in the project spec.</p>
+            <div class="image-group">
+                <figure>
+                    <img src="images/2d/model.jpg">
+                    <figcaption>Architecture of my NeRF model</figcaption>
+                </figure>
+            </div>
+            <p> I did hyper parameter tuning between
+                the following values. Learning Rate = 0.01, 0.005, 0. and. L = 5, 10, 20. The best combination was
+                having
+                Lr=0.01 and L (highest frequency) = 20. This gave me a MSE loss of 0.0025077678728848696 and a PSNR of
+                26.007126656845337. Below is the PSNR and Loss Plots.
+            <div class="image-group-small">
+                <figure>
+                    <img src="images/2d/loss.png">
+                    <figcaption>Validation Loss</figcaption>
+                </figure>
+                <figure>
+                    <img src="images/2d/psnr.png">
+                    <figcaption>Validation PSNR</figcaption>
+                </figure>
+            </div>
+            <p>Here is the visualization of the training process</p>
+            <div class="image-group-small">
+                <figure>
+                    <img src="images/2d/2d_0.png">
+                </figure>
+                <figure>
+                    <img src="images/2d/2d_1.png">
+                </figure>
+                <figure>
+                    <img src="images/2d/2d_2.png">
+                </figure>
+                <figure>
+                    <img src="images/2d/2d_3.png">
+                </figure>
+                <figure>
+                    <img src="images/2d/2d_4.png">
+                </figure>
+            </div>
+            <p>Here is the similar process done on the following image:</p>
+            <div class="image-group-small">
+                <figure>
+                    <img src="images/2d/og_2.jpg">
+                    <figcaption>Original Image</figcaption>
+                </figure>
+            </div>
+            <p>I found that the best values were </p>
+            <div class="image-group-small">
+                <figure>
+                    <img src="images/2d/loss_2.png">
+                    <figcaption>Validation Loss</figcaption>
+                </figure>
+                <figure>
+                    <img src="images/2d/psnr_2.png">
+                    <figcaption>Validation PSNR</figcaption>
+                </figure>
+            </div>
+            <p>Here is the visualization of the training process</p>
+            <div class="image-group-small">
+                <figure>
+                    <img src="images/2d/2d_2_0.png">
+                </figure>
+                <figure>
+                    <img src="images/2d/2d_2_1.png">
+                </figure>
+                <figure>
+                    <img src="images/2d/2d_2_2.png">
+                </figure>
+                <figure>
+                    <img src="images/2d/2d_2_3.png">
+                </figure>
+                <figure>
+                    <img src="images/2d/2d_2_4.png">
+                </figure>
+            </div>
+        </section>
+    </section>
+
+    <section class="steps">
+        <h2>Part 2: Fit a Neural Radiance Field from Multiple Images</h2>
+        <section class="step">
+            <h3>Implemenation Details</h3>
+            <h4>Creating Rays from Cameras</h4>
+            <p>I first created a method to transform from the pixel coordinates to camera coordinates using the
+                function pixel_to_camera. As was described in the spec, this function uses the intrinsics of the
+                camera in order to transform pixels to their corresponding locations relative to the camera.
+                I then created a function to transform from the camera space to the world space. This was called
+                pixel_to_ray and used both the intrinsics and extrinsics of the camera in order to transform
+                from the pixel space to the ray that that pixel corresponds to in the world space.</p>
+            <h4>Sampling</h4>
+            <p>Now that I have functions to translate between pixel locations and their corresponding rays, I
+                built a dataloader that would given a set of training images, sample rays and their
+                corresponding pixel values. This dataloader would take in a set of images, their corresponding
+                c2w matrices and output a randomly sampled set of ray origins, directions, and ray pixel values.
+                Below is a visualization of using this to sample some images.</p>
+            <div class="image-group-small">
+                <figure>
+                    <img src="images/3d/one_image.png">
+                    <figcaption>Sampling points from 1 image</figcaption>
+                </figure>
+                <figure>
+                    <img src="images/3d/render.png">
+                    <figcaption>Sampling Points from many images</figcaption>
+                </figure>
+            </div>
+            <h4>Training</h4>
+            <p> I trained the Neural Radiance Field using this sampling data. I used the default Implemenation
+                described in the spec, which I have attached below.</p>
+            <div class="image-group">
+                <figure>
+                    <img src="images/3d/spec.png">
+                    <figcaption>Architecture of my NeRF model</figcaption>
+                </figure>
+            </div>
+            <p>The model output estimated pixel values and densities. In order turn that into an actual image I
+                used the following discrete approximation of the volume rendering function. This equation would
+                give me RGB values that I could compare with the ground truth in order to train my model. </p>
+            <div class="image-group">
+                <figure>
+                    <img src="images/3d/volrend.png">
+                    <figcaption>Volume Rendering Equation</figcaption>
+                </figure>
+            </div>
+            <p>Using this and an Adam Optimizer with learning rate 0.0001, I was able to train a NeRF on these
+                images. My final PSNR was 24.27 and my final MSE Loss was 0.0037. These were both on the entire
+                validation set.</p>
+            <p>Here are my plots for the validation loss and PSNR</p>
+            <div class="image-group-small">
+                <figure>
+                    <img src="images/3d/loss.png">
+                    <figcaption>Validation Loss</figcaption>
+                </figure>
+                <figure>
+                    <img src="images/3d/psnr.png">
+                    <figcaption>Validation PSNR</figcaption>
+                </figure>
+            </div>
+            <p>Here are sample images from iteraitons of training, along with a gif showing the entire training
+                process</p>
+            <div class="image-group-small">
+                <figure>
+                    <img src="images/3d/out_train_0.png">
+                </figure>
+                <figure>
+                    <img src="images/3d/out_train_1.png">
+                </figure>
+                <figure>
+                    <img src="images/3d/out_train_2.png">
+                </figure>
+                <figure>
+                    <img src="images/3d/out_train_3.png">
+                </figure>
+                <figure>
+                    <img src="images/3d/out_0.png">
+                </figure>
+            </div>
+            <div class="image-group-small">
+                <figure>
+                    <img src="images/3d/train.gif">
+                    <figcaption>Entire Training Process</figcaption>
+                </figure>
+            </div>
+            <p>Finally we can use our NeRF to visualize the image from new points of view that we haven't seen
+                before. Here is a 360 spin around the lego truck, views we have never directly seen before.</p>
+            <div class="image-group-small">
+                <figure>
+                    <img src="images/3d/output.gif">
+                    <figcaption>Visualization of Novel Camera Positions </figcaption>
+                </figure>
+            </div>
+        </section>
+    </section>
+
+    <section class="steps">
+        <h1>Bells and Whistles</h1>
+        <div class="step">
+            <h3>Adding Background Colors</h3>
+            <p>In order to change the background colors, we need to look at the rays where there is low probability that
+                the pixel is there in the range. We can do this based off of our volumetric rendering function. We can
+                then scale this by the designed color to get the following output. </p>
+                <div class="image-group-small">
+                    <figure>
+                        <img src="images/output.gif">
+                        <figcaption>Visualization of Novel Camera Positions </figcaption>
+                    </figure>
+                </div>
+        </div>
+    </section>
+
+</body>
+
+</html>
