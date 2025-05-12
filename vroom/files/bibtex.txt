@@ -1,6 +1,8 @@
-@article{zhang2024monst3r,
-  author    = {Zhang, Junyi and Herrmann, Charles and Hur, Junhwa and Jampani, Varun and Darrell, Trevor and Cole, Forrester and Sun, Deqing and Yang, Ming-Hsuan},
-  title     = {MonST3R: A Simple Approach for Estimating Geometry in the Presence of Motion},
-  journal   = {arXiv preprint arxiv:2410.03825},
-  year      = {2024}
+@article{yadav2024vroom,
+  author       = {Yajat Yadav and Varun Bharadwaj and Jathin Korrapati and Tanish Baranwal},
+  title        = {VROOM: Visual Reconstruction over Onboard Multiview},  
+  year         = {2025},
+  note         = {Unpublished manuscript, for a class project},
+  institution  = {University of California, Berkeley},
+  url          = {http://varun-bharadwaj.github.io/vroom},
 }

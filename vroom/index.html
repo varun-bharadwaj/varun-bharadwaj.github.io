@@ -2,9 +2,8 @@
 
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-  <title>MonST3R: A Simple Approach for Estimating Geometry in the Presense of Motion</title>
+  <title>VROOM: Visual Reconstruction over Onboard Multiview</title>
   <link href="./files/style.css" rel="stylesheet">
-  <link rel="icon" href="icons/monst3r_icon.png" type="image/png">
   <script type="text/javascript" src="./files/jquery.mlens-1.0.min.js"></script>
   <script type="text/javascript" src="./files/jquery.js"></script>
   <style>
@@ -99,46 +98,30 @@
 <body>
   <div class="content">
     <h1 style="line-height: 0.75;">
-      <img src="./icons/monst3r_icon.png" alt="MonST3R Icon" style="width: 64px; vertical-align: middle;">
-      <strong>MonST3R: A Simple Approach for Estimating <br> Geometry in the Presence of Motion</strong>
+      <strong>VROOM: Visual Reconstruction over Onboard Multiview</strong>
     </h1>
     <p id="authors">
       <span>
-        <a href="https://junyi42.github.io/">Junyi Zhang<sup>1</sup></a>
+        <a>Yajat Yadav<sup>+</sup></a>
       </span>
       <span>
-        <a href="https://scholar.google.com/citations?user=LQvi5XAAAAAJ">Charles Herrmann<sup>2,+</sup></a>
+        <a>Varun Bharadwaj<sup>+</sup></a>
       </span>
       <span>
-        <a href="https://hurjunhwa.github.io/">Junhwa Hur<sup>2</sup></a>
-      </span>
-      <span>
-        <a href="https://varunjampani.github.io/">Varun Jampani<sup>3</sup></a>
-      </span>
-      <span>
-        <a href="https://people.eecs.berkeley.edu/~trevor/">Trevor Darrell<sup>1</sup></a>
+        <a>Tanish Baranwal<sup>+</sup></a>
       </span>
       <br>
       <span>
-        <a href="https://scholar.google.com/citations?user=xZRRr-IAAAAJ&hl">Forrester Cole<sup>2</sup></a>
+        <a>Jathin Korrapati<sup>+</sup></a>
       </span>
-      <span>
-        <a href="https://deqings.github.io/">Deqing Sun<sup>2,*</sup></a>
-      </span>
-      <span>
-        <a href="https://faculty.ucmerced.edu/mhyang/">Ming-Hsuan Yang<sup>2,4,*</sup></a>
-      </span>
+
       <br>
       <span class="institution"><a href="https://bair.berkeley.edu/"><sup>1</sup> UC Berkeley</a>
-        <a href="https://deepmind.google/"><sup>2</sup> Google DeepMind</a>
-        <a href="https://stability.ai/"><sup>3</sup> Stability AI</a>
-        <a href="https://www.ucmerced.edu/"><sup>4</sup> UC Merced</a></span>
-      <span class="institution"></span>
-      <span class="institution">(+: project lead, *: equal contribution)</span>
-      <br>
-      <span class="conference">ICLR 2025 (Spotlight)</span>
-      <br>
-      <br>
+        <span class="institution"></span>
+        <span class="institution">(+: equal contribution)</span>
+        <br>
+        <br>
+        <br>
     </p>
     </p>
 
@@ -147,94 +130,91 @@
 
     <!-- add video files/teaser_vid_v2_lowres.mp4 -->
     <video width="100%" controls>
-      <source src="./files/teaser_vid_v2_lowres.mp4" type="video/mp4">
+      <source src="vroom_demo_video.mp4" type="video/mp4">
     </video>
+    <a> A sample segment of the race, and the corresponding track reconstruction + car motion recovered by our
+      method.</a>
     <br>
     <br>
 
     <a style="text-align:center">
       <font size="+1">
-        <strong>MonST3R</strong> processes a dynamic video to produce a time-varying dynamic point cloud, along with per-frame camera poses and intrinsics, in a predominantly <strong>feed-forward</strong> manner. This representation then enables the efficient computation of downstream tasks, such as video depth estimation and dynamic/static scene segmentation.
+        We introduce <strong>VROOM</strong>, a system for reconstructing 3D models of Formula 1
+        circuits using
+        only onboard camera footage from racecars. Leveraging video data from the 2023 Monaco Grand Prix, we address
+        challenges in the videos such as high-speed motion, sharp turns of perspectives from a singular camera
+        perspective.
       </font>
     </a>
     <font size="+2">
       <p style="text-align: center;">
-        <a href="files\monst3r_paper.pdf" target="_blank">[Paper]</a> &nbsp;&nbsp;&nbsp;&nbsp;
-        <a href="https://arxiv.org/abs/2410.03825" target="_blank">[Arxiv]</a> &nbsp;&nbsp;&nbsp;&nbsp;
-        <a href="page1.html" target="_blank" style="font-weight: bold; color: rgb(238, 60, 223);">[Interactive Results🔥]</a> &nbsp;&nbsp;&nbsp;&nbsp;
-        <a href="https://github.com/Junyi42/monst3r" target="_blank">[Code]</a>&nbsp;&nbsp;&nbsp;&nbsp;
-        <!-- <a href="https://x.com/junyi42/status/1770799360353145037" target="_blank">[Twitter Post]</a>&nbsp;&nbsp;&nbsp;&nbsp; -->
-        <!-- <a href="https://www.youtube.com/watch?v=fyhg50qlNW8" target="_blank">[Video]</a>&nbsp;&nbsp;&nbsp;&nbsp; -->
+        <a href="files\VROOM.pdf" target="_blank">[Paper]</a> &nbsp;&nbsp;&nbsp;&nbsp;
+        <a href="https://github.com/yajatyadav/vroom" target="_blank">[Code]</a>&nbsp;&nbsp;&nbsp;&nbsp;
         <a href="files/bibtex.txt" target="_blank">[BibTeX]</a>
       </p>
     </font>
   </div>
 
   <!-- Begin new content: Demos -->
-<div class="content">
+  <div class="content">
     <h2>Interactive 4D Visualization</h2>
-    <p>Explore the 4D reconstruction results of MonST3R on various dynamic scenes. For more results, please visit the <a href="page1.html" style="font-weight: bold; color: rgb(238, 60, 223);">interactive results</a>.</p>
-  <!-- Instructions with icons -->
-  <div class="instructions" style="margin-top: -1em;">
-    <div class="instruction-item" style="display: flex; align-items: center;">
-      <img src="icons/left-click.png" alt="Left Click" style="margin-right: 0px;">
-      <span>Drag with <em>left</em> click to <strong>rotate</strong> view</span>
+    <p>Explore our 4D reconstruction results of VROOM on various track mini-sectors.
+      <!-- Instructions with icons -->
+    <div class="instructions" style="margin-top: -1em;">
+      <div class="instruction-item" style="display: flex; align-items: center;">
+        <img src="icons/left-click.png" alt="Left Click" style="margin-right: 0px;">
+        <span>Drag with <em>left</em> click to <strong>rotate</strong> view</span>
+      </div>
+
+      <div class="instruction-item" style="display: flex; align-items: center; margin-top: 10px;">
+        <img src="icons/scroll-wheel.png" alt="Scroll Wheel" style="margin-right: -5px;">
+        <span>Scroll to <strong>zoom</strong> in/out</span>
+      </div>
+
+      <div class="instruction-item" style="display: flex; align-items: center; margin-top: 10px;">
+        <img src="icons/right-click.png" alt="Right Click" style="margin-right: 0px;">
+        <span>Drag with <em>right</em> click to <strong>move</strong> view</span>
+      </div>
     </div>
 
-    <div class="instruction-item" style="display: flex; align-items: center; margin-top: 10px;">
-      <img src="icons/scroll-wheel.png" alt="Scroll Wheel" style="margin-right: -5px;">
-      <span>Scroll to <strong>zoom</strong> in/out</span>
+    <div class="instructions_small">
+      <div class="instruction-item_small" style="display: flex; align-items: center; margin-top: -15px;">
+        <img src="icons/letter-w.png" alt="W" style="margin-right: -10px;">
+        <img src="icons/letter-s.png" alt="S" style="margin-right: 0px;">
+        <span>Moving forward and backward</span>
+      </div>
+
+      <div class="instruction-item_small" style="display: flex; align-items: center; margin-top: -15px;">
+        <img src="icons/letter-a.png" alt="A" style="margin-right: -10px;">
+        <img src="icons/letter-d.png" alt="D" style="margin-right: 0px;">
+        <span>Moving left and right</span>
+      </div>
+
+      <div class="instruction-item_small" style="display: flex; align-items: center; margin-top: -15px;">
+        <img src="icons/letter-q.png" alt="Q" style="margin-right: -10px;">
+        <img src="icons/letter-e.png" alt="E" style="margin-right: 0px;">
+        <span>Moving upward and downward</span>
+      </div>
     </div>
 
-    <div class="instruction-item" style="display: flex; align-items: center; margin-top: 10px;">
-      <img src="icons/right-click.png" alt="Right Click" style="margin-right: 0px;">
-      <span>Drag with <em>right</em> click to <strong>move</strong> view</span>
-    </div>
-  </div>
-
-  <div class="instructions_small">
-    <div class="instruction-item_small" style="display: flex; align-items: center; margin-top: -15px;">
-      <img src="icons/letter-w.png" alt="W" style="margin-right: -10px;">
-      <img src="icons/letter-s.png" alt="S" style="margin-right: 0px;">
-      <span>Moving forward and backward</span>
-    </div>
-
-    <div class="instruction-item_small" style="display: flex; align-items: center; margin-top: -15px;">
-      <img src="icons/letter-a.png" alt="A" style="margin-right: -10px;">
-      <img src="icons/letter-d.png" alt="D" style="margin-right: 0px;">
-      <span>Moving left and right</span>
-    </div>
-
-    <div class="instruction-item_small" style="display: flex; align-items: center; margin-top: -15px;">
-      <img src="icons/letter-q.png" alt="Q" style="margin-right: -10px;">
-      <img src="icons/letter-e.png" alt="E" style="margin-right: 0px;">
-      <span>Moving upward and downward</span>
-    </div>
-  </div>
-
-  <!-- Downsampling note -->
-  <p style="text-align: center; font-size: 1em; padding: 0em; color: #555;">
-    (Results are downsampled <strong>4 times</strong> for efficient online rendering)
-  </p>
-
-  <!-- Wrapper for iframes -->
-  <div id="wrapper" style="
+    <!-- Wrapper for iframes -->
+    <div id="wrapper" style="
         display: flex;
         flex-wrap: wrap;
         justify-content: center;
         align-items: center;
         gap: 2em;
       ">
-    <!-- Insert two iframes -->
+      <!-- Insert two iframes -->
 
 
-    <iframe
-      src="https://monst3r-project.github.io/build/?playbackPath=https://varun-bharadwaj.github.io/vroom/recordings/recording_test_out.viser"></iframe>
-      
-    <iframe
-      src="https://monst3r-project.github.io/build/?playbackPath=https://varun-bharadwaj.github.io/vroom/recordings/recording_test_out_2.viser"></iframe>
+      <iframe
+        src="https://monst3r-project.github.io/build/?playbackPath=https://varun-bharadwaj.github.io/vroom/recordings/recording_test_out.viser"></iframe>
 
-  </div>
+      <iframe
+        src="https://monst3r-project.github.io/build/?playbackPath=https://varun-bharadwaj.github.io/vroom/recordings/recording_test_out_2.viser"></iframe>
+
+    </div>
 
   </div>
 
@@ -243,43 +223,77 @@
   <div class="content">
     <h2 style="text-align:center;">Abstract</h2>
     <font size="-0.">
-    <p>f12345.
-    </p>
-  </font>
+      <p>We introduce VROOM, a system for reconstructing 3D
+        models of Formula 1 circuits using only onboard camera
+        footage from racecars. Leveraging video data from the
+        2023 Monaco Grand Prix, we address challenges in the
+        videos such as high-speed motion, sharp turns of perspec-
+        tives from a singular camera perspective. Our pipeline uti-
+        lizes different methods such as DROID—Slam, AnyCam,
+        and Monst3r and combine preprocessing techniques such
+        as different methods of masking, temporal chunking, and
+        resolution scaling to account for dynamic motion and com-
+        putational constraints. We show Vroom is able to partially
+        recover the track and vehicle trajectories in complex envi-
+        ronments. These findings indicate the feasibility of using
+        onboard video for scalable 4D reconstruction across multi-
+        ple agents in real-world settings.
+      </p>
+    </font>
   </div>
 
   <div class="content">
-    <h2>Pointmap Representation for Dynamic Scene</h2>
-    <p> <strong>DUSt3R's pointmap representation</strong>: estimate xyz coordinates for <strong>two frames</strong>, <strong>aligned in</strong> the camera coordinate system of <strong>the first frame</strong>. <br> ➡️ There is no constraint on dynamic/static scenes in the representation! But how does DUSt3R actually work for dynamic scenes? </p>
-    <img class="summary-img" src="./files/fig2_limitation.png" style="width:100%;margin-bottom: -10px;">
+    <h2>Preprocessing Methods</h2>
+    <p> In order to make our method with the long F1 videos, we implement several preprocessing methods to improve
+      efficiency while maintaining reconstruction quality.
     <h3>
-      <center>Limitation of DUSt3R on dynamic scenes</center>
+      <center>Masking</center>
     </h3>
+    <a> Since the car remains fixed with respect to the camera in the videos, this often interferes with the
+      reconstruction. We try multiple masking methods to address this issue.</a>
+
+    <div style="display: flex;">
+      <img src="mask_car.png" style="width: 50%;">
+      <img src="mask_half.png" style="width: 50%;">
+    </div>
     <a>
-      <strong>Left</strong>: DUSt3R aligns the moving foreground subject and misaligns the background points as it is only trained on static scenes. 
-      <strong>Right</strong>: DUSt3R fails to estimate the depth of a foreground subject, placing it in the background.
+      <strong>Left</strong>: Masking just the car fails to solve the issue.
+      <strong>Right</strong>: Masking bottom half of the frame works best.
     </a>
 
-    <p> As this is mainly a <strong>data issue</strong>, we propose a simple approach to adapt DUSt3R to dynamic scenes, by <strong>fine-tuning</strong> on a small set of dynamic videos, which surprisingly works well.</p>
-    <img class="summary-img" src="./files/fig3_finetune_dataset.png" style="width:90%;">
-    <br>
-    <img class="summary-img" src="./files/fig4_fintune_ablation.png" style="width:70%;">
+    <p>Next, in addition to downsampling resolution and FPS, we also strategically chunk the video on straight segments
+      in the race. Since our method processes the video chunk by chunk, chunking on the straights is essential for
+      ensuring each turn is reconstructed with the highest accuracy possible.</p>
+    <video width="100%" controls>
+      <source src="chunk_1_video.mp4" type="video/mp4">
+    </video>
+    <video width="100%" controls>
+      <source src="chunk_2_video.mp4" type="video/mp4">
+    </video>
     <h3>
-      <center>(<em>Top</em>) Training datasets used fine-tuning on dynamic scenes; (<em>Bottom</em>) Ablation study on finetuning</center>
+      <center>(<em>Top</em>) First Video Chunk; (<em>Bottom</em>) Second Video Chunk. As we see, the two overlap in a
+        straight segment of the race.</center>
     </h3>
   </div>
-  
+
   <div class="content">
-    <h2>Dynamic Global Point Cloud</h2>
-    <p> For a video input consisting of more than two frames, we can aggregate all the pairwise pointmap results to build a global point cloud. </p>
+    <h2>Chunk-wise Point Cloud and Camera Extrinsics</h2>
+    <p> We utilize and extend the monst3r repo for learning the point cloud and camera parameters per chunk. </p>
     <img class="summary-img" src="./files/fig5_system.png" style="width:100%;">
     <h3>
       <center>Dynamic global point cloud and camera pose estimation</center>
     </h3>
     <a>
-      Given a fixed sized of temporal window, we compute pairwise pointmap for each frame pair with MonST3R and optical flow from off-the-shelf method. These intermediates then serve as inputs to optimize a global point cloud X<span style="text-decoration:overline;">̂</span>
-      and per-frame camera poses P<span style="text-decoration:overline;">̂</span> and intrinsics K<span style="text-decoration:overline;">̂</span>. 
-      Video depth can be directly derived from this unified representation.
+      This figure is from the MonST3R paper and illustrates the system we used. For each chunk, a window slides across
+      the video to build a graph with edges between pairs of frames. For each pair, optical flow is found using an
+      off-the-shelf method, and the point cloud found by Monst3r.
+      These intermediates are used in a global-level bundle adjustment to optimize the point cloud and camera
+      parameters.</a>
+    <a>
+      After repeating the above process with each chunk, we stitch together the chunks by utilizing the overlapping
+      frames- we utilize this correspondence to solve for the transformation matrix between frame i's extrinsics and
+      frame (i+1)'s extrinsics. This allows us to stitch together the camera trajectories, as well as combine all the
+      point clouds in one global reference frame.
     </a>
 
     <!-- <p> The global optimization is based on the following three loss terms: </p>
@@ -291,67 +305,59 @@
   </div>
 
   <div class="content">
-    <h2>Results - Video Depth</h2>
-    <p> <strong>Quantitatively</strong>, our video depth estimation result is competitive with task-specific methods, even the DepthCrafter released recently. </p>
-    <img class="summary-img" src="./files/fig6_depth_quant.png" style="width:80%;">
-    <p> <strong>Qualitatively</strong>, MonST3R aligns better with the ground truth depth, e.g., the first row in the bonn datsaet below. </p>
-    <img class="summary-img" src="./files/fig7_depth_bonn.png" style="width:80%; margin-top: 2px; margin-bottom: -5px;">
-    <h3>
-      <center>Video depth evaluation on Bonn dataset, predicted depth is after scale&shift alignment</center>
-    </h3>
+    <h2>Results - Turn Reconstructions</h2>
+    <table border="1" style="border-collapse: collapse; text-align: center;">
+      <caption style="font-weight: bold; margin-bottom: 10px;">Predicted vs Ground Truth Comparisons</caption>
+      tr>
+      <th>Turn</th>
+      <th>Predicted</th>
+      <th>Ground Truth</th>
+      </tr>
+      <tr>
+        <td>Turn 1</td>
+        <td><img src="turn_one_ours.png" alt=" Turn 1" width="100%"></td>
+        <td><img src="air_view_of_turn_one.png" alt="Ground Truth 1" width="100%"></td>
+      </tr>
+      <tr>
+        <td>Turn 8</td>
+        <td><img src="our_pred_turn_8.png" alt="Prediction 2" width="100%"></td>
+        <td><img src="air_view_of_turn_eight.png" alt="Ground Truth 2" width="100%"></td>
+      </tr>
+      <tr>
+        <td>Failure case; Turn 15 + 16</td>
+        <td><img src="our_turn_15_16.png" alt="Prediction 3" width="100%"></td>
+        <td><img src="chicane_gt (1).jpg" alt="Ground Truth 3" width="100%"></td>
+      </tr>
+      <tr>
+        <td>Turn 8</td>
+        <td><img src="our_turn_18.png" alt="Prediction 4" width="100%"></td>
+        <td><img src="turn18_gt (1).jpg" alt="Ground Truth 4" width="100%"></td>
+      </tr>
+    </table>
     <!-- todo, video depth example from davis -->
   </div>
 
-  <div class="content">
-    <h2>Results - Camera Pose</h2>
-    <p> <strong>Quantitatively</strong>, our camera pose estimation result is also competitive with task-specific methods. </p>
-    <img class="summary-img" src="./files/fig8_pose_quant.png" style="width:80%;">
-    <p> <strong>Qualitatively</strong>, MonST3R is more robust in challenging scenes, e.g., the cave_2 and temple_3 in Sintel. </p>
-    <img class="summary-img" src="./files/fig9_pose_sintel.png" style="width:100%; margin-top: 2px; margin-bottom: 0px;">
-    <img class="summary-img" src="./files/fig10_pose_scannet.png" style="width:85%; margin-top: 10px; margin-bottom: -5px;">
-    <h3>
-      <center>Camera pose estimation results on Sintel (<em>Top</em>) and Scannet dataset (<em>Bottom</em>)</center>
-    </h3>
-  </div>
 
-  <div class="content">
-    <h2>Results - Joint Dense Reconstruction & Pose Estimation</h2>
-    <p> <strong>Qualitatively</strong>, MonST3R outputs both reliable camera trajectories and geometry of dynamic scenes. </p>
-    <img class="summary-img" src="./files/fig12_joint.png" style="width:85%; margin-top: 2px; margin-bottom: 0px;">
-    <img class="summary-img" src="./files/fig11_joint.png" style="width:85%; margin-top: 10px; margin-bottom: -5px;">
-    <h3>
-      <center>Joint dense reconstruction and pose estimation results on DAVIS</center>
-    </h3>
-  </div>
-
-  <div class="content">
-    <h2>Results - Pairwise prediction</h2>
-    <p> We also show the results of feed-forward pairwise pointmaps prediction. </p>
-    <img class="summary-img" src="./files/fig13_pairwise.png" style="width:85%; margin-top: 2px; margin-bottom: 10px;">
-    <a>
-      <strong>Row 1</strong> demonstrates that even after fine-tuning, our method retains the ability to handle changing camera intrinsics. <strong>Rows 2 and 3</strong> demonstrate that our
-method can handle “impossible” alignments that two frames have almost no overlap, even in the presence of motion, unlike DUSt3R that misaligns based on the foreground object. <strong>Rows 4 and 5</strong>
-show that in addition to enabling the model to handle motion, our fine-tuning also has improved the model's ability to represent large-scale scenes, where DUSt3R predicts to be flat.
-    </a>
-  </div>
 
   <div class="content">
     <h2>BibTex</h2>
     <font size="-0.">
-    <code> @article{zhang2024monst3r,<br>
-    &nbsp;&nbsp;title={MonST3R: A Simple Approach for Estimating Geometry in the Presence of Motion},<br>
-    &nbsp;&nbsp;author={Zhang, Junyi and Herrmann, Charles and Hur, Junhwa and Jampani, Varun and Darrell, Trevor and Cole, Forrester and Sun, Deqing and Yang, Ming-Hsuan},<br>
-    &nbsp;&nbsp;journal={arXiv preprint arxiv:2410.03825},<br>
-    &nbsp;&nbsp;year={2024}<br>
-    } </code>
-  </font>
+      <code> @article{yadav2024vroom,<br>
+  &nbsp;&nbsp;author       = {Yadav, Yajat and Bharadwaj, Varun and Korrapati, Jathin and Baranwal, Tanish},<br>
+  &nbsp;&nbsp;title        = {VROOM: Visual Reconstruction over Onboard Multiview},<br>  
+  &nbsp;&nbsp;year         = {2025},<br>
+  &nbsp;&nbsp;note         = {Unpublished manuscript, for a class project},<br>
+  &nbsp;&nbsp;institution  = {University of California, Berkeley},<br>
+  &nbsp;&nbsp;url          = {http://varun-bharadwaj.github.io/vroom},<br>
+}</code>
+    </font>
   </div>
-  
+
   <div class="content" id="acknowledgements">
     <p><strong>Acknowledgements</strong>:
-      We borrow this template from <a href="https://sd-complements-dino.github.io/">SD+DINO</a>, which is originally from <a href="https://dreambooth.github.io/">DreamBooth</a>. 
-      The interactive 4D visualization is inspired by <a href="https://robot-see-robot-do.github.io/">Robot-See-Robot-Do</a>, and powered by <a href="https://github.com/nerfstudio-project/viser">Viser</a>. 
-      We sincerely thank <a href="https://scholar.google.com/citations?hl=en&user=Ecy6lXwAAAAJ">Brent Yi</a> for his support in setting up the online visualization.
+      We borrow this template from the Monst3r paper at <a href="https://monst3r-project.github.io//">Monst3r</a>.
+      Similarly,
+      the interactive 4D visualization is inspired by the visualizations presented by Monst3r.
       <!-- Recycling a familiar <a href="https://chail.github.io/latent-composition/">template</a> ;). -->
     </p>
   </div>
